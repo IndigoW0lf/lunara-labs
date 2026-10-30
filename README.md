@@ -46,6 +46,22 @@ Use `npm run dev -- --port 4174` for a different development port. Run `npm run 
 
 An unfinished search still receives a count out of all **85 targets**. Accuracy in the checked portion is reported separately and requires a known stopping point. The activity describes one person's attempt; it does not diagnose attention or establish a universal effect.
 
+## Progress gallery
+
+Screenshots of the working two-lab prototype, supplied during development. They show the current visual experience; migration status is tracked above. The result values show one attempt and do not establish a general effect.
+
+**Explore the labs** — illustrated introductions and a choice of investigations.
+
+![Lunara Labs home page with illustrated phone and investigation cards](docs/screenshots/home.png)
+
+**Trace a changing message** — choose a character, listen or read, and compare their message with its source.
+
+![Rumor conversation with Jo selected, a visible transcript, source link, and explanation](docs/screenshots/rumor-conversation.png)
+
+**Compare the two rounds** — whole-passage totals and checked-part accuracy stay distinct when the stopping point is unclear.
+
+![Attention comparison showing quiet and interrupted totals with separate checked-part accuracy](docs/screenshots/attention-results.png)
+
 ## Privacy and data flow
 
 - The browser app has **no customer backend, login, analytics, or runtime AI requests**.
