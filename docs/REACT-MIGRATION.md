@@ -2,7 +2,7 @@
 
 Decision recorded: October 30, 2026.
 
-**Status:** browser baselines and the React/TypeScript/Vite shell are implemented. The activity screens/state remain in an isolated legacy controller pending their individual conversion. This is a staged migration, not a completed cutover.
+**Status:** browser baselines and the React/TypeScript/Vite shell are implemented. Rumor now uses React screens and typed state. Attention and catalog/About screens remain in the isolated legacy controller. This is a staged migration, not a completed cutover.
 
 ## Why this change
 
@@ -17,7 +17,7 @@ The tradeoff is a dependency graph and build step that the prototype does not cu
 | Scope and migration decision | Documented | README, roadmap, and this plan agree on the target and current implementation. |
 | Existing behavior baseline | Six cases passed CI on the standalone prototype | Repeatable browser flows cover both labs at desktop and narrow widths using synthetic attempts and controlled timing. |
 | React/TypeScript/Vite tooling | Implemented with shared React shell; CI verification recorded per commit | Reproducible install with lockfile, type checking, production build, preview, updated CI and contributor commands. |
-| Shared shell and Rumor migration | Pending | Existing hash routes, transcripts, narration cancellation, source navigation, notes, print/export, and reload behavior pass regression checks. |
+| Shared shell and Rumor migration | Implemented; regression suite covers the migrated route | Existing hash routes, transcripts, narration cancellation, source navigation, notes, print/export, and reload behavior pass regression checks. |
 | Attention migration | Pending | Both conditions, timed/untimed modes, cue schedule, pause/recovery, stopping markers, scoring, and exports pass controlled-clock checks. |
 | Default-app cutover | Pending | Production build passes equivalent browser flows; saved attempt fixtures restore; documentation and serving/security configuration match the built app. |
 | Evidence Workbench | Pending | A complete new activity supports card movement, keyboard/touch alternatives, source connections, undo, reasoning feedback, and saved board state. |
@@ -25,7 +25,7 @@ The tradeoff is a dependency graph and build step that the prototype does not cu
 
 ## Proposed module boundaries
 
-`src/app/` now contains the React shell. The remaining paths below are proposed boundaries, not completed modules.
+`src/app/` contains the React shell and hash subscription; `src/labs/rumor/` contains the migrated Rumor activity and typed reducer; shared layout/phone/narration components live in `src/components/`. The remaining boundaries are proposed.
 
 - `src/app/`: application shell, lab catalog, hash-route handling, shared navigation, and top-level error handling.
 - `src/labs/rumor/` and `src/labs/attention/`: lab-specific screens, typed state transitions, and controllers.
@@ -68,3 +68,11 @@ Public hosting/domain connection, real Quest persistence, learner trials, and fi
 - Setup verification: Node 22.12 or later matches the installed Vite requirement. The production preview uses a portable `--built` argument rather than shell-specific environment assignment.
 
 The managed cloud-browser preview could not be observed because its browser route was blocked. No separate visual or assistive-technology review is claimed; the browser evidence above comes from automated CI flows. The original private hosted Site remains on its prior version.
+
+## Rumor conversion milestone
+
+Rumor now owns its React controls, typed state transitions, and synchronous browser-save boundary. Existing editorial prose is retained as JSX; typed responses render as React text, never raw HTML. Only fixed repository-authored icon SVG paths use an HTML rendering boundary. The original domain/results and narration modules remain shared and unchanged. A declaration file types the narration callback without changing its runtime.
+
+React subscribes to hash changes and chooses the Rumor route; the legacy controller yields that route in the React app. The standalone prototype retains its fallback for comparison. Leaving Attention still disposes its controller and saves/pauses an active round before React mounts Rumor. Returning home re-reads progress, so the catalog reflects completed Rumor work.
+
+Regression coverage adds supported old-attempt fixtures, preserved result versions/history, literal typed markup, heading focus, safe restart, and a failing-storage fixture whose in-memory work can still be exported. TypeScript/build and the existing 20 checks pass locally; CI runs all ten browser cases on development and production before this milestone reaches main. Separate visual, screen-reader and learner reviews remain pending.

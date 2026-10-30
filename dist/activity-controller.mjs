@@ -2,7 +2,7 @@ import {labs,messages,rumorQuestions,passages,LAB_VERSION,scoreRound,duePings,ma
 import {introScene,conversationScene,sandboxPhone,phoneFrame,portrait,glyph,taskNotification,notificationConversation,PHONE_ALERTS} from './immersive.mjs';
 import {narrate,stopNarration,prepareChime,chime} from './narration.mjs';
 
-export function mountLegacyActivities(main){
+export function mountLegacyActivities(main,{externalRumor=false}={}){
 
 const KEY='lunara-labs:1:';
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -134,7 +134,7 @@ function bindSandboxControls(){
 }
 
 function render(){stopNarration();clearInterval(breakTimer);breakTimer=null;if(slug==='rumor'){title(labs.rumor.title);[()=>intro('rumor'),rumorTrace,rumorEvidence,rumorWrite,()=>fieldNotes('rumor')][Math.min(4,state.rumor.step)]();}else if(slug==='attention'){title(labs.attention.title);[()=>intro('attention'),attentionSetup,attentionPrepare,attentionCompare,()=>fieldNotes('attention')][Math.min(4,state.attention.step)]();}else if(location.hash==='#/about')about();else home();bindIllustratedControls();}
-function route(){stopNarration();if(state.attention.active?.status==='running'){pause('You left the activity.');}clearClock();const part=location.hash.replace(/^#\//,'').split('?')[0];slug=Object.hasOwn(labs,part)?part:null;render();if(location.hash==='#labs'){requestAnimationFrame(()=>document.getElementById('labs')?.scrollIntoView({block:'start'}));}else focusHeading();}
+function route(){stopNarration();if(state.attention.active?.status==='running'){pause('You left the activity.');}clearClock();const part=location.hash.replace(/^#\//,'').split('?')[0];if(externalRumor&&part==='rumor')return;slug=Object.hasOwn(labs,part)?part:null;render();if(location.hash==='#labs'){requestAnimationFrame(()=>document.getElementById('labs')?.scrollIntoView({block:'start'}));}else focusHeading();}
 window.addEventListener('hashchange',route);
 const onVisibilityChange=()=>{if(document.hidden&&state.attention.active?.status==='running'){pause('The browser tab was hidden.');if(slug==='attention')render();}};
 document.addEventListener('visibilitychange',onVisibilityChange);

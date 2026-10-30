@@ -90,3 +90,44 @@ test('Narration controls stop on navigation and disclosure stays on About',async
  await page.getByRole('button',{name:'Got it',exact:true}).click();
  await expect(page.locator('#privacy')).not.toBeVisible();
 });
+
+
+test('Rumor: legacy work keeps its version, plain text, focus and restart semantics',async({page})=>{
+ const message='Synthetic <img src=x onerror=alert(1)> message';
+ await page.addInitScript(({message})=>{
+  localStorage.setItem('lunara-labs:1:rumor',JSON.stringify({version:'0.1.0',state:{step:3,selected:'F',visited:['B','C','D','E','F'],answers:{origins:1},checked:true,answerHistory:[{origins:1}],message,reflection:'Synthetic legacy reflection.',complete:false}}));
+ },{message});
+ await page.goto('/#/rumor');
+ await expect(page.locator('#useful-message')).toHaveValue(message);
+ await expect(page.locator('h1')).toBeFocused();
+ await page.locator('#rumor-finish').click();
+ await expect(page.locator('.reflection-quote').first()).toHaveText(message);
+ await expect(page.locator('.reflection-quote img')).toHaveCount(0);
+ const result=await resultDownload(page);
+ expect(result.labVersion).toBe('0.1.0');
+ expect(result.responses.answerHistory).toEqual([{origins:1}]);
+ expect(result.responses.message).toBe(message);
+ await page.getByRole('link',{name:'Explore another lab',exact:true}).click();
+ await expect(page.locator('.lab-card.sage')).toContainText('Revisit the lab');
+ await page.locator('.lab-card.sage a.button').click();
+ await expect(page.getByRole('heading',{name:'Your field notes',exact:true})).toBeVisible();
+ page.once('dialog',dialog=>dialog.accept());
+ await page.locator('#restart').click();
+ await expect(page.locator('#start')).toBeVisible();
+ const raw=await saved(page,'rumor');
+ expect(raw.state.message).toBe('');expect(raw.state.activityVersion).toBe('0.3.0');
+});
+
+test('Rumor: blocked saving keeps typed notes available for local export',async({page})=>{
+ await page.addInitScript(()=>{
+  localStorage.setItem('lunara-labs:1:rumor',JSON.stringify({version:'0.2.0',state:{step:3,message:'Synthetic old note.',reflection:'',complete:false}}));
+  Storage.prototype.setItem=function(){throw new DOMException('Synthetic unavailable storage','QuotaExceededError');};
+ });
+ await page.goto('/#/rumor');
+ await page.locator('#useful-message').fill('Synthetic unsaved note.');
+ await expect(page.getByRole('status')).toContainText('Browser saving is unavailable');
+ await page.locator('#rumor-finish').click();
+ const result=await resultDownload(page);
+ expect(result.responses.message).toBe('Synthetic unsaved note.');expect(result.labVersion).toBe('0.2.0');
+ expect((await saved(page,'rumor')).state.message).toBe('Synthetic old note.');
+});

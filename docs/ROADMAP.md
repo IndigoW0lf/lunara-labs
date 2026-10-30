@@ -6,7 +6,7 @@ The broader [lab development plan](LAB-DEVELOPMENT-PLAN.md) describes the propos
 
 ## Active initiative: React + TypeScript + Vite
 
-The staged React refactor is the selected next engineering initiative. Its [migration plan](REACT-MIGRATION.md) records the sequence, preservation requirements, and acceptance evidence. Browser baseline coverage passed CI. The React shell, TypeScript checks, and Vite production tooling are implemented; per-lab screen/state conversion remains pending. The shell uses an explicit legacy-controller adapter during that work.
+The staged React refactor is the selected next engineering initiative. Its [migration plan](REACT-MIGRATION.md) records the sequence, preservation requirements, and acceptance evidence. Browser baseline coverage passed CI. The React shell, TypeScript checks, and Vite production tooling are implemented; Rumor screen/state conversion is implemented and Attention is next. The shell uses an explicit legacy-controller adapter during that work.
 
 ## Suggested delivery order
 

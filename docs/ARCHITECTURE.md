@@ -2,13 +2,19 @@
 
 ## Selected next architecture
 
-The project is moving toward React + TypeScript + Vite through a staged refactor. The shared shell and tooling are implemented; individual lab screen/state conversion remains pending. The [migration plan](REACT-MIGRATION.md) separates future component/controller boundaries from the existing implementation and defines the evidence needed before cutover. Static hosting, browser-local progress, bundled assets, and the absence of runtime AI requests remain requirements.
+The project is moving toward React + TypeScript + Vite through a staged refactor. The shared shell and tooling are implemented; Rumor uses React screens and typed state; Attention remains pending. The [migration plan](REACT-MIGRATION.md) separates future component/controller boundaries from the existing implementation and defines the evidence needed before cutover. Static hosting, browser-local progress, bundled assets, and the absence of runtime AI requests remain requirements.
 
 ## Current React shell
 
-`index.html` loads `src/main.tsx`. React owns shared navigation, the privacy dialog, and an activity host. A layout effect mounts `dist/activity-controller.mjs` into that host and disposes audio, timers, and global subscriptions on unmount. The controller owns its descendants exclusively. This is a temporary bridge, not the completed lab conversion.
+`index.html` loads `src/main.tsx`. React owns shared navigation, the privacy dialog, hash-route subscription, and Rumor. For Attention/catalog/About, a layout effect mounts `dist/activity-controller.mjs` into an isolated host and disposes audio, timers, and global subscriptions on unmount. The controller owns its descendants exclusively. This is a temporary bridge, not the completed lab conversion.
 
 Vite bundles React locally and writes `build/`. `dist/` remains the public directory and retained prototype source; do not treat it as build output yet. Development uses Vite's local tooling connections. The production preview retains `connect-src 'none'`; no runtime service is required.
+
+## Rumor state and controls
+
+`src/labs/rumor/RumorLab.tsx` renders introduction, message tracing, evidence questions, writing and field notes with React controls. `state.ts` defines the state/action union and pure transitions. Each user change computes the next state once, updates the current ref and React state, and synchronously saves the existing versioned storage envelope. Storage failure leaves the in-memory attempt available for export. Earlier attempts retain their activity version and answer history through the existing domain restoration helper.
+
+Shared React components own step layout, phone/portrait presentation, and narration controls. Changing a step, message, or route cancels narration. Stable keyed controls preserve input focus; step changes focus the heading. The only HTML boundary is a fixed icon function; learner text is always rendered as text.
 
 ## Retained activity runtime
 
