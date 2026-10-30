@@ -1,6 +1,6 @@
 import {useCallback,useLayoutEffect,useRef,useState} from 'react';
-import {LAB_VERSION,duePings} from '../../../dist/data.mjs';
-import {chime,stopNarration} from '../../../dist/narration.mjs';
+import {LAB_VERSION,duePings} from '../../domain/data.mjs';
+import {chime,stopNarration} from '../../audio/narration.mjs';
 import {attentionReducer,initialAttention,restoreAttention,ATTENTION_KEY,type Action} from './state';
 function read(){try{return restoreAttention(JSON.parse(localStorage.getItem(ATTENTION_KEY)||'null'));}catch{return initialAttention();}}
 export function useAttention(){

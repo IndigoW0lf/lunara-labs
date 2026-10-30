@@ -1,4 +1,4 @@
-import {LAB_VERSION,restoreProgress,passages,scoreRound,duePings} from '../../../dist/data.mjs';
+import {LAB_VERSION,restoreProgress,passages,scoreRound,duePings} from '../../domain/data.mjs';
 export const ATTENTION_KEY='lunara-labs:1:attention';
 export type Condition='quiet'|'interrupted';
 export type Round={condition:Condition;status:'running'|'paused'|'stopped';phase:'working'|'record';selected:number[];elapsed:number;fired:number[];cueVisible:boolean;pauses:number;marker:number|null;uncertain:boolean;effort:number|'';lost:string;notes:string;phoneSound:boolean;chimesPlayed:number;openedNotifications:{cue:number;at:number}[];presentation:string;phonePanel:'notes'|'message';pauseReason?:string;recovered?:boolean;alertIndex?:number;dismissedNotifications?:number;score?:ReturnType<typeof scoreRound>|null};

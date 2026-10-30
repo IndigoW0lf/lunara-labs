@@ -13,10 +13,9 @@
     "check": "node scripts/check.mjs",
     "audio:generate": "node scripts/generate-narration.mjs",
     "test:browser": "playwright test",
-    "dev:legacy": "node scripts/serve.mjs",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build && node scripts/check-build.mjs",
     "typecheck": "tsc --noEmit",
-    "preview": "node scripts/serve.mjs --built"
+    "preview": "node scripts/serve.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1",

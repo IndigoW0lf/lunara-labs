@@ -1,5 +1,5 @@
 import {useEffect,useState} from 'react';
-import {narrate,stopNarration,type NarrationPhase} from '../../dist/narration.mjs';
+import {narrate,stopNarration,type NarrationPhase} from '../audio/narration.mjs';
 import {Icon} from './Phone';
 export function Narration({person,text,label,initialStatus='The message is written here too.',onSpeakingChange}:{person:string;text:string;label:string;initialStatus?:string;onSpeakingChange?:(speaking:boolean)=>void}){
  const [phase,setPhase]=useState<NarrationPhase|null>(null);

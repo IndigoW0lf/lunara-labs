@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {passages,countTargets,scoreRound,duePings,messages,makeResult,restoreProgress,LAB_VERSION} from '../dist/data.mjs';
-import {PHONE_ALERTS,CHARACTER_CELLS,conversationScene} from '../dist/immersive.mjs';
+import {passages,countTargets,scoreRound,duePings,messages,makeResult,restoreProgress,LAB_VERSION} from '../src/domain/data.mjs';
+import {PHONE_ALERTS,CHARACTER_CELLS} from '../src/presentation/phone.mjs';
 test('both source passages keep their matched target count, word count, and length',()=>{
  for(const text of Object.values(passages)){assert.equal(countTargets(text),85);assert.equal(text.split(/\s+/).length,98);assert.equal(text.replace(/\n/g,'').length,494);}
 });
@@ -36,5 +36,5 @@ test('new phone conditions and exploration are preserved separately from legacy 
 test('phone alerts and illustrated callers resolve to the retained case characters',()=>{
  assert.equal(PHONE_ALERTS.length,4);
  for(const alert of PHONE_ALERTS){assert.ok(messages.some(m=>m.id===alert.person));assert.ok(CHARACTER_CELLS[alert.person]);}
- const scene=conversationScene({selected:'D',visited:['B','C','D']});assert.ok(scene.includes(messages.find(m=>m.id==='D').text));assert.ok(scene.includes('Ren heard Jo'));
+ assert.equal(messages.find(m=>m.id==='D').parent,'C');
 });

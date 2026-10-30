@@ -1,4 +1,4 @@
-import {messages} from './data.mjs';
+import {messages} from '../domain/data.mjs';
 
 // Same synthesis model as Quest, with a distinct voice and delivery brief for each character.
 export const VOICE_MODEL='gpt-4o-mini-tts';

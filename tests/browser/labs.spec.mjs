@@ -168,3 +168,21 @@ test('Attention: sandbox apps, demo notifications, and silent-by-default setting
  expect(attempt.sandboxVisits).toEqual(['settings','home','notes','messages']);expect(attempt.demoNotificationCount).toBe(1);expect(attempt.demoNotification).toBe(false);
  await page.locator('#start').click();await expect(page.locator('#round-sound')).not.toBeChecked();
 });
+
+
+test('Catalog and About: saved labels, anchor focus, fallback routes and disclosure',async({page})=>{
+ await page.addInitScript(()=>localStorage.setItem('lunara-labs:1:rumor',JSON.stringify({version:'0.1.0',state:{step:3,message:'Synthetic catalog fixture.'}})));
+ await page.goto('/');
+ await expect(page.locator('.lab-card.sage')).toContainText('Continue the lab');
+ await expect(page.locator('.lab-card.peach')).toContainText('Open the lab');
+ await page.getByRole('link',{name:'Choose an investigation'}).click();
+ await expect(page.getByRole('heading',{name:'Choose your first investigation',exact:true})).toBeFocused();
+ await page.getByRole('link',{name:'How it works',exact:true}).click();
+ await expect(page.getByRole('heading',{level:1})).toBeFocused();
+ await expect(page.locator('main')).toContainText('The character voices are AI-generated.');
+ await page.getByRole('button',{name:'Where your work is saved'}).click();
+ await expect(page.locator('#privacy')).toBeVisible();await page.getByRole('button',{name:'Got it',exact:true}).click();
+ await page.goto('/#/missing-lab');await expect(page.getByRole('heading',{name:'Choose your first investigation',exact:true})).toBeVisible();
+ expect(await page.evaluate(()=>localStorage.getItem('lunara-labs:1:attention'))).toBeNull();
+ expect((await saved(page,'rumor')).version).toBe('0.1.0');
+});

@@ -1,14 +1,10 @@
 # Architecture
 
-## Selected next architecture
+## React application boundary
 
-The project is moving toward React + TypeScript + Vite through a staged refactor. The shared shell and tooling are implemented; Both labs use React screens and typed state; catalog/About cleanup remains pending. The [migration plan](REACT-MIGRATION.md) separates future component/controller boundaries from the existing implementation and defines the evidence needed before cutover. Static hosting, browser-local progress, bundled assets, and the absence of runtime AI requests remain requirements.
+`index.html` loads `src/main.tsx`. React owns all routes, navigation, the privacy dialog, catalog and About pages, and both labs. Hash-route subscriptions preserve existing lab links; unknown routes fall back to the catalog. The catalog reads supported saved envelopes without writing them and displays Open, Continue, or Revisit labels. Route/step changes manage heading focus; the catalog anchor moves focus to its investigation heading.
 
-## Current React shell
-
-`index.html` loads `src/main.tsx`. React owns shared navigation, the privacy dialog, hash-route subscription, and both labs. For catalog/About, a layout effect mounts `dist/activity-controller.mjs` into an isolated host and disposes audio, timers, and global subscriptions on unmount. The controller owns its descendants exclusively. This is a temporary bridge, not the completed lab conversion.
-
-Vite bundles React locally and writes `build/`. `dist/` remains the public directory and retained prototype source; do not treat it as build output yet. Development uses Vite's local tooling connections. The production preview retains `connect-src 'none'`; no runtime service is required.
+`src/` contains executable source. `public/` contains styles, fonts, illustrations, narration and attribution only. Vite bundles the app into ignored `build/`. The old controller, string-template renderers and standalone prototype entry are removed. Build verification rejects executable source in public resources, raw source modules in output, missing entry assets, changed narration and missing font notices. Development uses Vite's local tooling connections; the production preview retains `connect-src 'none'` and bounded static serving.
 
 ## Rumor state and controls
 
@@ -22,11 +18,9 @@ Shared React components own step layout, phone/portrait presentation, and narrat
 
 `Passage.tsx` retains the original character indices and roving keyboard navigation. Its stable selection handler and memoized props prevent timer-only renders from rebuilding the letter controls. Notification presentation remains separate from timer status, so reading a message does not pause the clock. Existing domain helpers still determine whole-passage totals, checked-part accuracy, result versions and local-only delivery.
 
-## Retained activity runtime
+## Shared modules
 
-`dist/` is the complete static application. HTML loads local CSS and ES modules; images, fonts, and narration are local assets. The standalone prototype still has no build step or application API server. The new React shell uses the Vite build described above.
-
-`activity-controller.mjs` owns hash routing, screen rendering, events, round clocks, browser saving, and export controls. `immersive.mjs` produces the illustrated phone/character interfaces. `data.mjs` holds versioned content, source links, scoring, restoration, and result serialization. `narration.mjs` plays the fixed audio manifest and cancels active playback when the experience changes.
+`src/domain/data.mjs` retains content, source links, scoring, restoration and result serialization. `src/presentation/phone.mjs` retains fixed icon paths, portrait coordinates and authored notifications. `src/audio/` holds the canonical narration specification, manifest and playback cancellation. The domain and playback implementations are preserved across relocation; the cast imports content from its new path.
 
 ## Progress and results
 

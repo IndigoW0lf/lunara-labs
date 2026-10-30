@@ -3,7 +3,7 @@ import {readFile,realpath,stat} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
-const defaultRoot=fileURLToPath(new URL('../dist/',import.meta.url));
+const defaultRoot=fileURLToPath(new URL('../build/',import.meta.url));
 const types={'.html':'text/html; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.png':'image/png','.svg':'image/svg+xml','.ttf':'font/ttf','.mp3':'audio/mpeg','.json':'application/json; charset=utf-8'};
 
 // Local static preview only. There are no application APIs or request-body handlers.
@@ -35,6 +35,6 @@ if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.ur
  const port=Number(process.env.LABS_PORT??process.env.PORT??4173);
  if(!Number.isInteger(port)||port<0||port>65535)throw new Error('Use a valid LABS_PORT.');
  const host=process.env.LABS_HOST??'127.0.0.1';
- const server=createPreviewServer(process.argv.includes('--built')?fileURLToPath(new URL('../build/',import.meta.url)):defaultRoot);
+ const server=createPreviewServer();
  server.listen(port,host,()=>console.log(`Lunara Labs: http://${host}:${server.address().port}`));
 }

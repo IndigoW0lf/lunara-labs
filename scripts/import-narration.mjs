@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import {fileURLToPath} from 'node:url';
-import {narrationSpecs} from '../dist/audio-cast.mjs';
+import {narrationSpecs} from '../src/audio/audio-cast.mjs';
 import {prepareClipAudio} from './audio-processing.mjs';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
@@ -14,7 +14,7 @@ const input=JSON.parse(await new Promise((resolve,reject)=>{
  process.stdin.on('data',receive);process.stdin.on('error',reject);process.stdin.resume();
 }));
 const specs=narrationSpecs(),manifest={};
-await fs.mkdir(path.join(root,'dist/assets/audio'),{recursive:true});
+await fs.mkdir(path.join(root,'public/assets/audio'),{recursive:true});
 for(const spec of specs){
  const clip=input.find(item=>item.id===spec.id);
  if(!clip||['model','voice','instructions','text'].some(k=>clip[k]!==spec[k]))throw new Error('Audio specification mismatch for '+spec.id);
@@ -22,8 +22,8 @@ for(const spec of specs){
  if(bytes.length<1000)throw new Error('Missing audio for '+spec.id);
  const hash=crypto.createHash('sha256').update(JSON.stringify(spec)).digest('hex').slice(0,16);
  const relative=`assets/audio/${spec.id.toLowerCase()}-${hash}.mp3`;
- await fs.writeFile(path.join(root,'dist',relative),bytes);
+ await fs.writeFile(path.join(root,'public',relative),bytes);
  manifest[spec.id]={...spec,...processing,url:relative,bytes:bytes.length,sha256:crypto.createHash('sha256').update(bytes).digest('hex')};
 }
-await fs.writeFile(path.join(root,'dist/audio-manifest.mjs'),'// Fixed, AI-generated dialogue clips. Regenerate when text, direction, model or voice changes.\nexport const VOICE_CLIPS='+JSON.stringify(manifest,null,2)+';\n');
+await fs.writeFile(path.join(root,'src/audio/audio-manifest.mjs'),'// Fixed, AI-generated dialogue clips. Regenerate when text, direction, model or voice changes.\nexport const VOICE_CLIPS='+JSON.stringify(manifest,null,2)+';\n');
 console.log(`Imported ${specs.length} verified AI voice clips.`);

@@ -3,15 +3,15 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import {spawn} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
-import {narrationSpecs} from '../dist/audio-cast.mjs';
-import {VOICE_CLIPS} from '../dist/audio-manifest.mjs';
+import {narrationSpecs} from '../src/audio/audio-cast.mjs';
+import {VOICE_CLIPS} from '../src/audio/audio-manifest.mjs';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const clips=[];
 for(const spec of narrationSpecs()){
  const existing=VOICE_CLIPS[spec.id];
  if(existing&&['model','voice','instructions','text'].every(k=>existing[k]===spec[k])&&(existing.pitchSemitones??0)===(spec.pitchSemitones??0)&&(existing.appliedPitchSemitones??0)===(spec.pitchSemitones??0)){
-  try{const bytes=await fs.readFile(path.join(root,'dist',existing.url));if(crypto.createHash('sha256').update(bytes).digest('hex')===existing.sha256){clips.push({...existing,audio:bytes.toString('base64')});console.log(spec.id+': using cached '+spec.voice+' clip');continue;}}catch{}
+  try{const bytes=await fs.readFile(path.join(root,'public',existing.url));if(crypto.createHash('sha256').update(bytes).digest('hex')===existing.sha256){clips.push({...existing,audio:bytes.toString('base64')});console.log(spec.id+': using cached '+spec.voice+' clip');continue;}}catch{}
  }
  const key=process.env.OPENAI_API_KEY;
  if(!key)throw new Error('Set OPENAI_API_KEY securely to generate changed audio. Existing bundled clips need no key.');

@@ -1,6 +1,6 @@
 import {useLayoutEffect,useRef,useState,type ReactNode} from 'react';
-import {labs,messages,rumorQuestions,makeResult,LAB_VERSION} from '../../../dist/data.mjs';
-import {stopNarration} from '../../../dist/narration.mjs';
+import {labs,messages,rumorQuestions,makeResult,LAB_VERSION} from '../../domain/data.mjs';
+import {stopNarration} from '../../audio/narration.mjs';
 import {LabLayout} from '../../components/LabLayout';
 import {Icon,Phone,PhoneHeader,Portrait,VoiceWaves} from '../../components/Phone';
 import {Narration} from '../../components/Narration';

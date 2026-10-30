@@ -1,5 +1,5 @@
 import type {CSSProperties,ReactNode} from 'react';
-import {CHARACTER_CELLS,glyph} from '../../dist/immersive.mjs';
+import {CHARACTER_CELLS,glyph} from '../presentation/phone.mjs';
 // Only the fixed, repository-authored SVG paths enter this HTML boundary.
 export function Icon({name}:{name:string}){return <span dangerouslySetInnerHTML={{__html:glyph(name)}}/>;}
 export function Portrait({id,className=''}:{id:string;className?:string}){

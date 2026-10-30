@@ -21,7 +21,7 @@ The automated guard detects a limited set of patterns. It is a regression check 
 | Play narration or load an illustration/font | Bundled static files from the same host. |
 | Follow the footer's business-site link | That external site, only when the user chooses the link. |
 
-The shipped browser JavaScript contains no analytics SDK, remote data API client, account flow, database connection, or AI service request. Ordinary static hosting still involves requests to its host; that host can have its own access logs and policies. The included development server does not log request bodies and accepts only static `GET`/`HEAD` requests.
+The shipped browser JavaScript contains no analytics SDK, remote data API client, account flow, database connection, or AI service request. Ordinary static hosting still involves requests to its host; that host can have its own access logs and policies. The production preview accepts only static `GET`/`HEAD` requests with a restrictive content security policy. Vite development adds local tooling and hot-reload connections; it is not the production server. Runtime source lives in `src/`, public resources in `public/`, and the generated static app in `build/`.
 
 ## Browser-local does not mean non-personal
 

@@ -2,9 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
-import {narrationSpecs} from '../dist/audio-cast.mjs';
-import {VOICE_CLIPS} from '../dist/audio-manifest.mjs';
-import {narrate,stopNarration} from '../dist/narration.mjs';
+import {narrationSpecs} from '../src/audio/audio-cast.mjs';
+import {VOICE_CLIPS} from '../src/audio/audio-manifest.mjs';
+import {narrate,stopNarration} from '../src/audio/narration.mjs';
 import {prepareClipAudio} from '../scripts/audio-processing.mjs';
 
 test('locked cast retains the exact voice recordings selected by the maintainer',()=>{
@@ -24,7 +24,7 @@ test('every fixed transcript has its own AI voice and a matching, intact MP3 ass
   for(const key of ['text','voice','model','instructions'])assert.equal(clip[key],spec[key]);
   assert.equal(clip.pitchSemitones??0,spec.pitchSemitones??0);
   assert.equal(clip.appliedPitchSemitones??0,spec.pitchSemitones??0);
-  const bytes=fs.readFileSync(new URL('../dist/'+clip.url,import.meta.url));assert.ok(bytes.length>1000);
+  const bytes=fs.readFileSync(new URL('../public/'+clip.url,import.meta.url));assert.ok(bytes.length>1000);
   assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'),clip.sha256);
  }
 });

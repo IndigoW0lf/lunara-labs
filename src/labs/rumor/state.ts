@@ -1,4 +1,4 @@
-import {LAB_VERSION,restoreProgress} from '../../../dist/data.mjs';
+import {LAB_VERSION,restoreProgress} from '../../domain/data.mjs';
 export const RUMOR_KEY='lunara-labs:1:rumor';
 export type MessageId='A'|'B'|'C'|'D'|'E'|'F';
 export type RumorState={activityVersion:string;step:number;visited:MessageId[];selected:MessageId;answers:Record<string,number>;checked:boolean;message:string;reflection:string;traceNote?:string;complete:boolean;answerHistory?:Record<string,number>[]};

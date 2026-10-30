@@ -6,6 +6,6 @@ Narration consists of fixed, AI-generated readings of the teaching dialogue. The
 
 The exact current recordings and hashes are in `VOICE-CAST-LOCK.json`. Jo uses Nova at +1 semitone; Ari uses Coral at +3. The other selected voices have no offline pitch shift. Playback uses the shared 1.05x speed with pitch preservation.
 
-Andika and Faculty Glyphic are bundled under the SIL Open Font License. Their copyright attribution and license text are retained in `dist/assets/FONT-LICENSES.txt`; these public third-party notices are not customer records.
+Andika and Faculty Glyphic are bundled under the SIL Open Font License. Their copyright attribution and license text are retained in `public/assets/FONT-LICENSES.txt`; these public third-party notices are not customer records.
 
 Only active illustrations, selected audio, and two raw sources needed for future pitch adjustments are included. Earlier unused cover previews, voice auditions, private source-document references, and planning records are excluded from this handoff.

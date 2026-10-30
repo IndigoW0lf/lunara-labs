@@ -1,8 +1,8 @@
 import {useCallback,useEffect,useLayoutEffect,useRef,useState,type ReactNode} from 'react';
-import {labs,passages,makeResult,summarizeRound} from '../../../dist/data.mjs';
-import {PHONE_ALERTS} from '../../../dist/immersive.mjs';
-import {ATTENTION_INTRO} from '../../../dist/audio-cast.mjs';
-import {stopNarration,prepareChime,chime} from '../../../dist/narration.mjs';
+import {labs,passages,makeResult,summarizeRound} from '../../domain/data.mjs';
+import {PHONE_ALERTS} from '../../presentation/phone.mjs';
+import {ATTENTION_INTRO} from '../../audio/audio-cast.mjs';
+import {stopNarration,prepareChime,chime} from '../../audio/narration.mjs';
 import {LabLayout} from '../../components/LabLayout';
 import {Phone,PhoneHeader,Portrait,Icon} from '../../components/Phone';
 import {Narration} from '../../components/Narration';

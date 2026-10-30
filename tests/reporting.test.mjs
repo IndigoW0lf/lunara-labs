@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {summarizeRound,makeResult,restoreProgress,passages} from '../dist/data.mjs';
+import {summarizeRound,makeResult,restoreProgress,passages} from '../src/domain/data.mjs';
 
 test('an unfinished search still has a whole-passage score, separate from checked-part accuracy',()=>{
  const result=summarizeRound('eEeabE',{selected:[0,2,3,5],marker:3});

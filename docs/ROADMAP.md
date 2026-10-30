@@ -4,14 +4,14 @@ These are genuine next steps for the existing prototype. They can be developed w
 
 The broader [lab development plan](LAB-DEVELOPMENT-PLAN.md) describes the proposed investigations, physical learning connections, interaction patterns, and engineering challenges. Its candidate labs are planned work; only Rumor Grow and Attention Trap are implemented today.
 
-## Active initiative: React + TypeScript + Vite
+## React migration complete
 
-The staged React refactor is the selected next engineering initiative. Its [migration plan](REACT-MIGRATION.md) records the sequence, preservation requirements, and acceptance evidence. Browser baseline coverage passed CI. The React shell, TypeScript checks, and Vite production tooling are implemented; Both lab conversions are implemented; catalog/About and controller cleanup are next. The shell uses an explicit legacy-controller adapter during that work.
+All routes now use React + TypeScript + Vite. The [migration record](REACT-MIGRATION.md) documents meaningful commits, preserved behavior, browser coverage and source/output boundaries. Existing catalog and activity behavior is implemented; manual accessibility/learner reviews remain separate.
 
 ## Suggested delivery order
 
 1. Complete the existing labs' usability/accessibility checks and establish repeatable browser-flow tests.
-2. Establish the React + TypeScript + Vite foundation and migrate both current labs incrementally, preserving behavior and saved attempts.
+2. Maintain the completed React foundation and regression checks while refining any observed usability findings.
 3. Build **Evidence Workbench** as the first new vertical slice: accessible card movement, source connections, saved board state, reasoning feedback, and field-note output.
 4. Add **Rook's Delivery Routes** and **Moonlight Model** to exercise command sequencing and spatial animation. Extract shared interaction/state components from real implementation needs.
 5. Add the media layer through **Memory Scene Studio** and **Video Observation Station**, with local assets, captions, pause/seek behavior, and timeline observations.
@@ -29,7 +29,7 @@ Automate a Rumor attempt and both Attention rounds, including pause/reload, retu
 
 ## 3. Separate the activity controller from screen rendering
 
-Migrate the responsibilities of `app.mjs` into React screens, typed lab controllers, and browser adapters using the [React migration plan](REACT-MIGRATION.md). Preserve existing attempt versions, scoring behavior, routes, and visible teaching language. Existing domain tests and browser-flow evidence must still pass after the refactor.
+Completed: React screens and typed lab controllers replace the old activity controller, as recorded in the [migration record](REACT-MIGRATION.md). Preserve existing attempt versions, scoring behavior, routes, and visible teaching language. Existing domain tests and browser-flow evidence must still pass after the refactor.
 
 ## 4. Support multiple local attempts
 
