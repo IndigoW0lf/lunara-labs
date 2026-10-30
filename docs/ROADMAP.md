@@ -2,6 +2,18 @@
 
 These are genuine next steps for the existing prototype. They can be developed with invented content and synthetic local attempts.
 
+The broader [lab development plan](LAB-DEVELOPMENT-PLAN.md) describes the proposed investigations, physical learning connections, interaction patterns, and engineering challenges. Its candidate labs are planned work; only Rumor Grow and Attention Trap are implemented today.
+
+## Suggested delivery order
+
+1. Complete the existing labs' usability/accessibility checks and establish repeatable browser-flow tests.
+2. Build **Evidence Workbench** as the first new vertical slice: accessible card movement, source connections, saved board state, reasoning feedback, and field-note output.
+3. Add **Rook's Delivery Routes** and **Moonlight Model** to exercise command sequencing and spatial animation. Extract shared interaction/state components from real implementation needs.
+4. Add the media layer through **Memory Scene Studio** and **Video Observation Station**, with local assets, captions, pause/seek behavior, and timeline observations.
+5. Extend into particle models, branching habitats/group decisions, field observations, and later adult scenarios as source lessons and learner feedback support them.
+
+For each lab, agree the source lesson and learning goal, build a complete small experience, test its access/data boundaries, then refine from actual use. Release/access and real Quest persistence remain separate decisions. The engineering tracks below support that sequence rather than implying every platform feature must be built before a new lab can start.
+
 ## 1. Complete the responsive and accessibility pass
 
 Exercise both complete activities on narrow screens, landscape layouts, keyboard-only input, and a screen reader. Check task focus after notifications, passage navigation, accessible timer/status updates, reduced motion, and touch target sizes. Record reproducible findings and fix them without altering the learning sources or selected audio.

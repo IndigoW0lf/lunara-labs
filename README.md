@@ -79,7 +79,28 @@ Lunara Quest assignments, server-side learner records, purchase entitlements, an
 
 ## Work ahead
 
-The [development roadmap](docs/ROADMAP.md) includes scoped work on accessible phone interactions, responsive layouts, attempt management, browser tests, module boundaries, and a local mock integration adapter. Production learner data is not needed for those tasks.
+The next stage is to grow Lunara Labs into a varied collection of tangible investigations drawn from the existing curriculum library. Each interaction should help a learner test an idea, see a consequence, and explain what happened. A lesson might become an evidence workbench, a robot route, a movable light-and-orbit model, or a video observation station.
+
+**The following are proposed experiences, not features already implemented:**
+
+| Proposed lab | Interaction and learning purpose |
+| --- | --- |
+| **Evidence Workbench** | Move evidence onto claims, trace source connections, and revise an explanation as new information arrives. |
+| **Rook's Delivery Routes** | Arrange command blocks, animate a delivery robot through a map, and step back through a route to debug it. |
+| **Moonlight Model** | Move a light, Earth, and Moon model; predict the view, then connect the simulation to a ball-and-lamp activity. |
+| **Memory Scene Studio** | Observe a short original scene, reconstruct its details, then compare the reconstruction with the record. |
+| **Inside a Thought** | Explore images, imagined sounds, words, and other ways of thinking through optional drawing, audio, and concept-map tools. |
+| **Particle Playground** | Manipulate an animated particle model and build restricted molecule examples with draggable pieces. |
+| **Video Observation Station** | Pause captioned clips, mark observations on a timeline, make a prediction, and revisit the relevant moment. |
+| **Habitat Workshop** | Make choices in an illustrated branching environment and trace the consequences back to those choices. |
+| **The Lunch Table** | Compare a personal choice with authored group opinions and practical constraints, then explain what influenced the decision. |
+| **Nature Field Station** | Pair a physical observation activity with before/after records, comparison tools, and an original time-lapse. |
+
+The [lab development plan](docs/LAB-DEVELOPMENT-PLAN.md) connects these candidates to learning goals, physical activities, and specific engineering challenges. It also outlines later mood/storytelling and adult everyday-decision labs.
+
+Substantial work remains on accessible drag-and-drop with equivalent keyboard controls, animation/state synchronization, captioned video and timeline events, spatial models, authored branching rules, versioned local attempts, and automated browser tests. These provide concrete tasks for continued human-directed development with Claude Code; the plan does not imply endorsement or acceptance by an external program.
+
+The [engineering roadmap](docs/ROADMAP.md) prioritizes the foundations and first complete new lab. All of this development can use invented content and synthetic attempts. Video is planned around bundled/local clips by default; third-party embeds would be an optional, separately reviewed data-flow change. Production customer data is not required.
 
 ## Assets and attribution
 
