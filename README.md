@@ -10,7 +10,7 @@ The app now starts through a **React + TypeScript + Vite shell**. The existing l
 
 **The next development phase is a staged migration to React + TypeScript + Vite**, followed by the first new Evidence Workbench activity. The goal is to give the growing collection shared activity components, explicit state/result types, and a maintainable foundation for accessible card movement, animation, and video.
 
-**Status — October 30, 2026:** browser baselines passed all six desktop/narrow cases in CI. React, TypeScript, Vite, the shared shell, and a production build are implemented. Rumor and Attention screen/state conversion remains pending; the shell currently hosts their existing controller through an explicit lifecycle adapter.
+**Status — October 30, 2026:** browser baselines passed all six desktop/narrow cases in CI. React, TypeScript, Vite, the shared shell, and a production build are implemented and passed the same six browser cases against both development and production output. Rumor and Attention screen/state conversion remains pending; the shell currently hosts their existing controller through an explicit lifecycle adapter.
 
 1. Establish repeatable browser checks for both existing labs, including timers, pause/reload recovery, narration, notes, and exports.
 2. Introduce React, TypeScript, and Vite; migrate the shell and each lab incrementally while preserving saved attempts and current behavior.
@@ -23,7 +23,7 @@ See the [migration plan and completion checklist](docs/REACT-MIGRATION.md) for t
 
 ## Try it
 
-Requirements: **Node.js 22 or later** and a modern browser.
+Requirements: **Node.js 22.12 or later** and a modern browser.
 
 ```sh
 npm ci

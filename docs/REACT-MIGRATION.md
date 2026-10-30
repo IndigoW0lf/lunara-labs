@@ -64,4 +64,7 @@ Public hosting/domain connection, real Quest persistence, learner trials, and fi
 ## Commit evidence
 
 - `0471d05`: browser baseline tooling and flows; GitHub CI passed all six desktop/narrow cases against the standalone prototype.
-- Next milestone: React shell/tooling with an isolated mount/dispose controller, strict TypeScript checks for new source, production build, and CI flows against development and production servers. Per-lab JSX/state conversion remains pending.
+- `0ec9c71`: React shell/tooling with an isolated mount/dispose controller, strict TypeScript checks for new source, and production build. [GitHub CI](https://github.com/IndigoW0lf/lunara-labs/actions/runs/41095563318) passed the 20 existing checks plus all six browser cases against development and all six against production output. Per-lab JSX/state conversion remains pending.
+- Setup verification: Node 22.12 or later matches the installed Vite requirement. The production preview uses a portable `--built` argument rather than shell-specific environment assignment.
+
+The managed cloud-browser preview could not be observed because its browser route was blocked. No separate visual or assistive-technology review is claimed; the browser evidence above comes from automated CI flows. The original private hosted Site remains on its prior version.

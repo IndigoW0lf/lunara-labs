@@ -2,7 +2,7 @@
 
 ## Local workflow
 
-Use Node.js 22 or later and `npm ci`. `npm run dev` starts Vite; `npm run build` type-checks the React source and writes static output to `build/`. `npm run preview` serves only that output through the bounded static preview server, with no request-body/results endpoint and a restrictive content security policy. `LABS_PORT` selects the production preview port. Vite uses `--port` for development. `npm run dev:legacy` serves the retained standalone prototype.
+Use Node.js 22.12 or later (the Vite minimum on Node 22) and `npm ci`. `npm run dev` starts Vite; `npm run build` type-checks the React source and writes static output to `build/`. `npm run preview` serves only that output through the bounded static preview server, with no request-body/results endpoint and a restrictive content security policy. `LABS_PORT` selects the production preview port. Vite uses `--port` for development. `npm run dev:legacy` serves the retained standalone prototype.
 
 Browser progress persists between edits. Use synthetic attempts while developing. Export any synthetic notes you need before restarting a lab. Do not commit browser profiles, real response exports, or environment files.
 
