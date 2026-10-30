@@ -2,7 +2,7 @@
 
 Decision recorded: October 30, 2026.
 
-**Status:** browser baselines and the React/TypeScript/Vite shell are implemented. Rumor now uses React screens and typed state. Attention and catalog/About screens remain in the isolated legacy controller. This is a staged migration, not a completed cutover.
+**Status:** browser baselines and the React/TypeScript/Vite shell are implemented. Both labs now use React screens and typed state. Catalog/About screens remain in the isolated legacy controller. This is a staged migration, not a completed cutover.
 
 ## Why this change
 
@@ -18,7 +18,7 @@ The tradeoff is a dependency graph and build step that the prototype does not cu
 | Existing behavior baseline | Six cases passed CI on the standalone prototype | Repeatable browser flows cover both labs at desktop and narrow widths using synthetic attempts and controlled timing. |
 | React/TypeScript/Vite tooling | Implemented with shared React shell; CI verification recorded per commit | Reproducible install with lockfile, type checking, production build, preview, updated CI and contributor commands. |
 | Shared shell and Rumor migration | Implemented; regression suite covers the migrated route | Existing hash routes, transcripts, narration cancellation, source navigation, notes, print/export, and reload behavior pass regression checks. |
-| Attention migration | Pending | Both conditions, timed/untimed modes, cue schedule, pause/recovery, stopping markers, scoring, and exports pass controlled-clock checks. |
+| Attention migration | Implemented; regression verification required before promotion | Both conditions, timed/untimed modes, cue schedule, pause/recovery, stopping markers, scoring, and exports pass controlled-clock checks. |
 | Default-app cutover | Pending | Production build passes equivalent browser flows; saved attempt fixtures restore; documentation and serving/security configuration match the built app. |
 | Evidence Workbench | Pending | A complete new activity supports card movement, keyboard/touch alternatives, source connections, undo, reasoning feedback, and saved board state. |
 | Reviewer walkthrough | Pending | Screenshots and a short walkthrough show the actual working version, with planned features labeled separately. |
@@ -76,3 +76,11 @@ Rumor now owns its React controls, typed state transitions, and synchronous brow
 React subscribes to hash changes and chooses the Rumor route; the legacy controller yields that route in the React app. The standalone prototype retains its fallback for comparison. Leaving Attention still disposes its controller and saves/pauses an active round before React mounts Rumor. Returning home re-reads progress, so the catalog reflects completed Rumor work.
 
 Regression coverage adds supported old-attempt fixtures, preserved result versions/history, literal typed markup, heading focus, safe restart, and a failing-storage fixture whose in-memory work can still be exported. TypeScript/build and the existing 20 checks pass locally; CI runs all ten browser cases on development and production before this milestone reaches main. Separate visual, screen-reader and learner reviews remain pending.
+
+## Attention conversion milestone
+
+Attention now has React introduction/sandbox, prediction, preparation/break, working-round, observation, comparison, and field-note screens. The typed reducer owns round transitions; a dedicated clock/storage hook owns one interval, a monotonic start/base reference, visibility/page-leave handling, and synchronous user-change saving. Timer rendering does not restart a round. Cleanup pauses/saves a running attempt before another route mounts. Saving remains limited to whole elapsed seconds during ticking, with immediate saves for user actions.
+
+Passage buttons retain original text indices, letter selection, last-checked markers, roving keyboard focus and arrow/Home/End behavior. The passage component is memoized so timer ticks do not reconcile every letter. Notifications keep the four authored times and message text, continue the clock while open, and restore passage focus on return. Paused rounds cannot open or dismiss cues. Both raw target totals and checked-part accuracy still use the unchanged domain helpers.
+
+Additional regression coverage exercises an untimed round beyond two minutes, reload while running, paused-time exclusion, preserved keyboard marks, no duplicate cues, route-away recovery, sandbox app visits and default silent settings. Fourteen browser cases run at desktop/narrow sizes against both development and production. The catalog/About bridge and retained prototype remain; removing those dependencies is a later milestone.

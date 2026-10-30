@@ -8,11 +8,11 @@ Browser progress persists between edits. Use synthetic attempts while developing
 
 ## React refactor workflow
 
-The shared shell now uses React + TypeScript + Vite. `src/app/App.tsx` mounts the existing activity controller into an isolated main element and disposes its timers, audio, and global listeners on unmount. This bridge now handles Attention/catalog/About; Rumor bypasses it and renders its own React tree. React owns the header, footer, privacy dialog, and host itself.
+The shared shell now uses React + TypeScript + Vite. `src/app/App.tsx` mounts the existing activity controller into an isolated main element and disposes its timers, audio, and global listeners on unmount. This bridge now handles only catalog/About; both labs bypass it and render their own React trees. React owns the header, footer, privacy dialog, and host itself.
 
 `dist/` is still retained source and assets; Vite copies it as public material into ignored `build/` and emits the new React entry there. Do not delete `dist/` as though it were generated output. Removing this temporary source layout is a later migration step.
 
-Run `npm run build`, `npm run check`, and `npm run test:browser`. Install Chromium once with `npx playwright install chromium`. CI runs the ten browser cases against Vite and the production preview. Use `LABS_TEST_SERVER='npm run preview' npm run test:browser` to test a built version locally after stopping Vite. Existing pure domain/audio tests remain unchanged. Tests use invented attempts and controlled clocks; keep real learner responses and browser profiles out of fixtures.
+Run `npm run build`, `npm run check`, and `npm run test:browser`. Install Chromium once with `npx playwright install chromium`. CI runs the fourteen browser cases against Vite and the production preview. Use `LABS_TEST_SERVER='npm run preview' npm run test:browser` to test a built version locally after stopping Vite. Existing pure domain/audio tests remain unchanged. Tests use invented attempts and controlled clocks; keep real learner responses and browser profiles out of fixtures.
 
 ## Optional audio work
 

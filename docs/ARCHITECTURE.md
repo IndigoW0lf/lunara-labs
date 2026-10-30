@@ -2,11 +2,11 @@
 
 ## Selected next architecture
 
-The project is moving toward React + TypeScript + Vite through a staged refactor. The shared shell and tooling are implemented; Rumor uses React screens and typed state; Attention remains pending. The [migration plan](REACT-MIGRATION.md) separates future component/controller boundaries from the existing implementation and defines the evidence needed before cutover. Static hosting, browser-local progress, bundled assets, and the absence of runtime AI requests remain requirements.
+The project is moving toward React + TypeScript + Vite through a staged refactor. The shared shell and tooling are implemented; Both labs use React screens and typed state; catalog/About cleanup remains pending. The [migration plan](REACT-MIGRATION.md) separates future component/controller boundaries from the existing implementation and defines the evidence needed before cutover. Static hosting, browser-local progress, bundled assets, and the absence of runtime AI requests remain requirements.
 
 ## Current React shell
 
-`index.html` loads `src/main.tsx`. React owns shared navigation, the privacy dialog, hash-route subscription, and Rumor. For Attention/catalog/About, a layout effect mounts `dist/activity-controller.mjs` into an isolated host and disposes audio, timers, and global subscriptions on unmount. The controller owns its descendants exclusively. This is a temporary bridge, not the completed lab conversion.
+`index.html` loads `src/main.tsx`. React owns shared navigation, the privacy dialog, hash-route subscription, and both labs. For catalog/About, a layout effect mounts `dist/activity-controller.mjs` into an isolated host and disposes audio, timers, and global subscriptions on unmount. The controller owns its descendants exclusively. This is a temporary bridge, not the completed lab conversion.
 
 Vite bundles React locally and writes `build/`. `dist/` remains the public directory and retained prototype source; do not treat it as build output yet. Development uses Vite's local tooling connections. The production preview retains `connect-src 'none'`; no runtime service is required.
 
@@ -15,6 +15,12 @@ Vite bundles React locally and writes `build/`. `dist/` remains the public direc
 `src/labs/rumor/RumorLab.tsx` renders introduction, message tracing, evidence questions, writing and field notes with React controls. `state.ts` defines the state/action union and pure transitions. Each user change computes the next state once, updates the current ref and React state, and synchronously saves the existing versioned storage envelope. Storage failure leaves the in-memory attempt available for export. Earlier attempts retain their activity version and answer history through the existing domain restoration helper.
 
 Shared React components own step layout, phone/portrait presentation, and narration controls. Changing a step, message, or route cancels narration. Stable keyed controls preserve input focus; step changes focus the heading. The only HTML boundary is a fixed icon function; learner text is always rendered as text.
+
+## Attention state and clock
+
+`src/labs/attention/AttentionLab.tsx` renders the sandbox and all activity screens. `state.ts` defines typed round/state/action structures and pure transitions. `useAttention.ts` owns one interval and a monotonic performance-clock base. React updates never reset that base. Reloaded running rounds recover paused; visibility changes and route disposal pause and save before another route mounts. User changes save synchronously; ticks persist once per elapsed second. Storage failure leaves the in-memory attempt available for download.
+
+`Passage.tsx` retains the original character indices and roving keyboard navigation. Its stable selection handler and memoized props prevent timer-only renders from rebuilding the letter controls. Notification presentation remains separate from timer status, so reading a message does not pause the clock. Existing domain helpers still determine whole-passage totals, checked-part accuracy, result versions and local-only delivery.
 
 ## Retained activity runtime
 
