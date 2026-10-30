@@ -106,4 +106,4 @@ The [engineering roadmap](docs/ROADMAP.md) prioritizes the foundations and first
 
 The illustrations and character narration are AI-assisted project assets. An in-app note explains the generated voices, and full transcripts remain available. The selected recordings are tracked in [the voice-cast lock](docs/VOICE-CAST-LOCK.json).
 
-Bundled Andika and Faculty Glyphic fonts retain their [SIL Open Font License notices](dist/assets/FONT-LICENSES.txt). See [asset notes](docs/ASSETS.md) for provenance. No separate open-source license has been selected for the original application and curriculum assets.
+Bundled Andika and Faculty Glyphic fonts retain their [SIL Open Font License notices](dist/assets/FONT-LICENSES.txt). See [asset notes](docs/ASSETS.md) for provenance. The software is licensed under the **MIT License**; see [LICENSE](LICENSE). Lesson content, illustrations, narration recordings, and branding are excluded from that software grant and remain under separate terms. See [LICENSE-SCOPE.md](LICENSE-SCOPE.md) for the boundaries. The repository as a whole is therefore mixed-license.
