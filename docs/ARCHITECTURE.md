@@ -1,6 +1,10 @@
 # Architecture
 
-## Runtime boundary
+## Selected next architecture
+
+The project is moving toward React + TypeScript + Vite through a staged refactor. This is a development decision, not a description of the current runtime. The [migration plan](REACT-MIGRATION.md) separates future component/controller boundaries from the existing implementation and defines the evidence needed before cutover. Static hosting, browser-local progress, bundled assets, and the absence of runtime AI requests remain requirements.
+
+## Current runtime boundary
 
 `dist/` is the complete static application. HTML loads local CSS and ES modules; images, fonts, and narration are local assets. There is no build step or application API server.
 

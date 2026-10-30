@@ -6,6 +6,12 @@ Use Node.js 22 or later. Run `npm run dev`, open the printed loopback URL, and r
 
 Browser progress persists between edits. Use synthetic attempts while developing. Export any synthetic notes you need before restarting a lab. Do not commit browser profiles, real response exports, or environment files.
 
+## React refactor workflow
+
+React + TypeScript + Vite is the selected next stack. See [REACT-MIGRATION.md](REACT-MIGRATION.md) for milestones and acceptance checks. The current checkout still uses the dependency-free preview described above; do not assume `npm install`, a Vite build, TypeScript checking, or automated browser tests exist yet.
+
+Introduce new commands, dependency lockfiles, build output rules, CI checks, and contributor instructions together when the tooling lands. Keep the existing domain/audio tests usable during migration. Use invented attempts and isolated browser storage for regression fixtures; never commit browser profiles or real learner responses.
+
 ## Optional audio work
 
 No generation is necessary to run the app. The current selected files are already bundled and locked. The model is `gpt-4o-mini-tts`; the cast and exact dialogue live in `dist/audio-cast.mjs`.

@@ -6,6 +6,19 @@ Lunara Labs turns small investigations into something learners can explore: a ph
 
 The current prototype is a buildless web app written in vanilla JavaScript. It runs locally with **no account, database, API key, or package installation**.
 
+## Active development: React refactor
+
+**The next development phase is a staged migration to React + TypeScript + Vite**, followed by the first new Evidence Workbench activity. The goal is to give the growing collection shared activity components, explicit state/result types, and a maintainable foundation for accessible card movement, animation, and video.
+
+**Status — October 30, 2026:** migration scope and acceptance criteria are documented; browser regression coverage is the next implementation task. The runnable app below is still the vanilla JavaScript prototype. React dependencies, components, and build tooling have not landed yet.
+
+1. Establish repeatable browser checks for both existing labs, including timers, pause/reload recovery, narration, notes, and exports.
+2. Introduce React, TypeScript, and Vite; migrate the shell and each lab incrementally while preserving saved attempts and current behavior.
+3. Build Evidence Workbench with accessible card movement, source connections, undo, and local saving.
+4. Add screenshots and a short project walkthrough so visitors can inspect the working experience.
+
+See the [migration plan and completion checklist](docs/REACT-MIGRATION.md) for the proposed module boundaries and evidence required before switching the default app. The current setup instructions remain valid until the tooling change is implemented.
+
 ![The illustrated Attention Trap activity](dist/assets/attention-lab-cover.png)
 
 ## Try it

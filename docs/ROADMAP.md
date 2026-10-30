@@ -4,13 +4,18 @@ These are genuine next steps for the existing prototype. They can be developed w
 
 The broader [lab development plan](LAB-DEVELOPMENT-PLAN.md) describes the proposed investigations, physical learning connections, interaction patterns, and engineering challenges. Its candidate labs are planned work; only Rumor Grow and Attention Trap are implemented today.
 
+## Active initiative: React + TypeScript + Vite
+
+The staged React refactor is the selected next engineering initiative. Its [migration plan](REACT-MIGRATION.md) records the sequence, preservation requirements, and acceptance evidence. Planning is complete; regression-test implementation and runtime migration are pending. The current runnable app remains vanilla JavaScript.
+
 ## Suggested delivery order
 
 1. Complete the existing labs' usability/accessibility checks and establish repeatable browser-flow tests.
-2. Build **Evidence Workbench** as the first new vertical slice: accessible card movement, source connections, saved board state, reasoning feedback, and field-note output.
-3. Add **Rook's Delivery Routes** and **Moonlight Model** to exercise command sequencing and spatial animation. Extract shared interaction/state components from real implementation needs.
-4. Add the media layer through **Memory Scene Studio** and **Video Observation Station**, with local assets, captions, pause/seek behavior, and timeline observations.
-5. Extend into particle models, branching habitats/group decisions, field observations, and later adult scenarios as source lessons and learner feedback support them.
+2. Establish the React + TypeScript + Vite foundation and migrate both current labs incrementally, preserving behavior and saved attempts.
+3. Build **Evidence Workbench** as the first new vertical slice: accessible card movement, source connections, saved board state, reasoning feedback, and field-note output.
+4. Add **Rook's Delivery Routes** and **Moonlight Model** to exercise command sequencing and spatial animation. Extract shared interaction/state components from real implementation needs.
+5. Add the media layer through **Memory Scene Studio** and **Video Observation Station**, with local assets, captions, pause/seek behavior, and timeline observations.
+6. Extend into particle models, branching habitats/group decisions, field observations, and later adult scenarios as source lessons and learner feedback support them.
 
 For each lab, agree the source lesson and learning goal, build a complete small experience, test its access/data boundaries, then refine from actual use. Release/access and real Quest persistence remain separate decisions. The engineering tracks below support that sequence rather than implying every platform feature must be built before a new lab can start.
 
@@ -24,7 +29,7 @@ Automate a Rumor attempt and both Attention rounds, including pause/reload, retu
 
 ## 3. Separate the activity controller from screen rendering
 
-Break the large `app.mjs` into smaller lab/state/view modules while preserving existing attempt versions, scoring behavior, routes, and visible teaching language. Existing domain tests and browser-flow evidence should still pass after the refactor.
+Migrate the responsibilities of `app.mjs` into React screens, typed lab controllers, and browser adapters using the [React migration plan](REACT-MIGRATION.md). Preserve existing attempt versions, scoring behavior, routes, and visible teaching language. Existing domain tests and browser-flow evidence must still pass after the refactor.
 
 ## 4. Support multiple local attempts
 
