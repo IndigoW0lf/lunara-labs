@@ -6,9 +6,9 @@ Lunara Labs will turn more of the existing lesson library into experiences learn
 
 Choose an interaction because it makes an idea easier to investigate. Moving a card should expose a relationship; changing a control should produce an understandable consequence. Each lab should give the learner something useful to say or try afterward, including a connection to a physical activity when that suits the lesson.
 
-**Current implementation:** How Does a Rumor Grow? and The Attention Trap, with illustrated phone interactions, fixed narration, browser-local progress, scoring, and field notes.
+**Current implementation:** Evidence Workbench’s courtyard case, How Does a Rumor Grow? and The Attention Trap, with illustrated phone interactions, fixed narration, browser-local progress, scoring, and field notes.
 
-**Everything below is proposed development.** Working titles, activity details, and mappings to source lessons need a content pass before implementation. This plan describes authentic work still to do; it does not claim the new labs are built, validated, or approved by an external program.
+**Evidence Workbench now has an implemented courtyard case**, described in [its scope record](EVIDENCE-WORKBENCH.md). The other candidate investigations remain proposed development. Working titles, activity details, and mappings to source lessons need a content pass before implementation. This plan describes authentic work still to do; it does not claim the new labs are built, validated, or approved by an external program.
 
 ## Learning loop
 

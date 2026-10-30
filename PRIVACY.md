@@ -40,6 +40,10 @@ For development, demonstrations, coding-assistant sessions, and review submissio
 
 No API key is included. Running and testing the existing app does not require that tool or any provider account. Changing it to accept personal or customer material would change this review's data-flow assumptions.
 
+## Evidence Workbench
+
+The courtyard records are authored teaching material. Board placement, undo history and reflections remain in this browser; the result file contains source/card IDs and the learner’s own explanation, with no account identifier. The workbench requests no uploads, location, camera or provider access. Its first case has no new audio generation. The same free-text and shared-browser limitations apply.
+
 ## Future integrations
 
 Quest persistence, analytics, authentication, payments, and cross-origin result delivery are not enabled. A future implementation will need its own data-flow, authorization, failure-recovery, and retention review. The current browser-local implementation should remain runnable without production credentials.

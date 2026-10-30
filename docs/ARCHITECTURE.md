@@ -2,7 +2,7 @@
 
 ## React application boundary
 
-`index.html` loads `src/main.tsx`. React owns all routes, navigation, the privacy dialog, catalog and About pages, and both labs. Hash-route subscriptions preserve existing lab links; unknown routes fall back to the catalog. The catalog reads supported saved envelopes without writing them and displays Open, Continue, or Revisit labels. Route/step changes manage heading focus; the catalog anchor moves focus to its investigation heading.
+`index.html` loads `src/main.tsx`. React owns all routes, navigation, the privacy dialog, catalog and About pages, and all three labs. Hash-route subscriptions preserve existing lab links; unknown routes fall back to the catalog. The catalog reads supported saved envelopes without writing them and displays Open, Continue, or Revisit labels. Route/step changes manage heading focus; the catalog anchor moves focus to its investigation heading.
 
 `src/` contains executable source. `public/` contains styles, fonts, illustrations, narration and attribution only. Vite bundles the app into ignored `build/`. The old controller, string-template renderers and standalone prototype entry are removed. Build verification rejects executable source in public resources, raw source modules in output, missing entry assets, changed narration and missing font notices. Development uses Vite's local tooling connections; the production preview retains `connect-src 'none'` and bounded static serving.
 
@@ -41,3 +41,7 @@ No audio generation occurs during browser use. The developer-only generator can 
 The intended boundary is a small adapter that accepts launch context and returns a versioned result. Current local use must keep working when that adapter is absent. Develop against a local mock first.
 
 A future real integration must validate launch ownership, lab/version, payload shape, source origin, and idempotent completion on the server. It must acknowledge success only after saving and preserve local work when delivery fails. No such integration or credential is present in this repository.
+
+## Evidence Workbench
+
+`src/labs/evidence/model.mjs` owns the independent 1.0.0 board envelope, stable card/target IDs, immutable placement/undo operations, restoration validation, source-graph checks, authored feedback and local-only results. `EvidenceLab.tsx` renders the case and explanations, while `useCardMovement.ts` feeds the same move operation from native drag, touch/pen capture with edge scrolling, and explicit destination menus. The source inspector presents an ordered textual trail. A separate guide route supplies adult facilitation and worked reasoning. `src/domain/catalog.mjs` extends the original catalog without changing original lesson/scoring/result modules.
