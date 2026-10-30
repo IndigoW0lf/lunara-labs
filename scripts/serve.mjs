@@ -35,6 +35,6 @@ if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.ur
  const port=Number(process.env.LABS_PORT??process.env.PORT??4173);
  if(!Number.isInteger(port)||port<0||port>65535)throw new Error('Use a valid LABS_PORT.');
  const host=process.env.LABS_HOST??'127.0.0.1';
- const server=createPreviewServer();
+ const server=createPreviewServer(process.env.LABS_SERVE_ROOT?path.resolve(process.env.LABS_SERVE_ROOT):defaultRoot);
  server.listen(port,host,()=>console.log(`Lunara Labs: http://${host}:${server.address().port}`));
 }

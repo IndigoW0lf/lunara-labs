@@ -1,6 +1,6 @@
 # Lunara Labs development
 
-Read the README and PRIVACY.md before making changes. Use Node.js 22 or later. Run `npm run dev` for a local static preview and `npm run check` before handing off changes. Run `npm ci` to install development tooling. Browser regression checks use `npm run test:browser` after `npx playwright install chromium`. The current app has no runtime dependencies.
+Read the README and PRIVACY.md before making changes. Use Node.js 22 or later. Run `npm run dev` for Vite development, `npm run build` for type checking and the production build, and `npm run check` before handing off changes. Run `npm ci` to install development tooling. Browser regression checks use `npm run test:browser` after `npx playwright install chromium`. React and React DOM are bundled runtime dependencies. `dist/` remains retained prototype source during migration; `build/` is disposable output. Do not clear or overwrite `dist/`. The controller adapter owns only its main-element descendants; preserve its cleanup until each lab has React state/screens.
 
 ## Preserve the learning experience
 

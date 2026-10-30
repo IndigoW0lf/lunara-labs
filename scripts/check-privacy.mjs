@@ -5,7 +5,7 @@ import {fileURLToPath} from 'node:url';
 const root=fileURLToPath(new URL('../',import.meta.url));
 const skipped=new Set(['.git','node_modules','coverage','playwright-report','test-results']);
 const findings=[];
-const textExtensions=new Set(['.md','.mjs','.js','.html','.css','.json','.yml','.yaml','.txt','.example']);
+const textExtensions=new Set(['.md','.mjs','.js','.html','.css','.json','.yml','.yaml','.txt','.example','.ts','.tsx']);
 const privateLink=/https?:\/\/(?:app\.)?notion\.(?:so|com)\b|\blibfile_[a-z0-9]+|\bappgprj_[a-z0-9]+|\/workspace\/(?:scratch|sites)\//i;
 const credential=/\b(?:sk-(?:proj-)?[A-Za-z0-9_-]{24,}|gh[pousr]_[A-Za-z0-9]{24,}|github_pat_[A-Za-z0-9_]{24,})\b|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/;
 const personalEmail=/[A-Z0-9._%+-]+@(?:gmail|hotmail|outlook|yahoo|icloud)\.[A-Z]{2,}/i;
@@ -23,7 +23,7 @@ function walk(dir){
   if(privateLink.test(text))findings.push(relative+': private workspace/reference marker');
   if(credential.test(text))findings.push(relative+': possible credential');
   if(personalEmail.test(text))findings.push(relative+': personal email address');
-  if(relative.startsWith('dist'+path.sep)&&['.mjs','.js','.css','.html'].includes(path.extname(entry.name))&&browserNetwork.test(text))findings.push(relative+': browser network integration needs review');
+  if(['dist','src','build'].some(dir=>relative.startsWith(dir+path.sep))&&['.mjs','.js','.ts','.tsx','.css','.html'].includes(path.extname(entry.name))&&browserNetwork.test(text))findings.push(relative+': browser network integration needs review');
  }
 }
 walk(root);

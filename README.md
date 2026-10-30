@@ -4,28 +4,29 @@
 
 Lunara Labs turns small investigations into something learners can explore: a phone with messages to trace, a task that notifications interrupt, and field notes that connect the experience to an explanation. It is a companion to The Lunara Edit curricula and also works on its own.
 
-The current prototype is a buildless web app written in vanilla JavaScript. It runs locally with **no account, database, API key, or runtime dependencies**.
+The app now starts through a **React + TypeScript + Vite shell**. The existing lab screens run through a temporary controller adapter while their individual conversion proceeds. It needs no account, database, or API key.
 
 ## Active development: React refactor
 
 **The next development phase is a staged migration to React + TypeScript + Vite**, followed by the first new Evidence Workbench activity. The goal is to give the growing collection shared activity components, explicit state/result types, and a maintainable foundation for accessible card movement, animation, and video.
 
-**Status — October 30, 2026:** migration scope and acceptance criteria are documented; browser regression coverage is the next implementation task. The runnable app below is still the vanilla JavaScript prototype. React dependencies, components, and build tooling have not landed yet.
+**Status — October 30, 2026:** browser baselines passed all six desktop/narrow cases in CI. React, TypeScript, Vite, the shared shell, and a production build are implemented. Rumor and Attention screen/state conversion remains pending; the shell currently hosts their existing controller through an explicit lifecycle adapter.
 
 1. Establish repeatable browser checks for both existing labs, including timers, pause/reload recovery, narration, notes, and exports.
 2. Introduce React, TypeScript, and Vite; migrate the shell and each lab incrementally while preserving saved attempts and current behavior.
 3. Build Evidence Workbench with accessible card movement, source connections, undo, and local saving.
 4. Add screenshots and a short project walkthrough so visitors can inspect the working experience.
 
-See the [migration plan and completion checklist](docs/REACT-MIGRATION.md) for the proposed module boundaries and evidence required before switching the default app. The current setup instructions remain valid until the tooling change is implemented.
+See the [migration plan and completion checklist](docs/REACT-MIGRATION.md) for the proposed module boundaries and evidence required before switching the default app. The setup below runs the React shell; `npm run dev:legacy` still runs the standalone prototype for comparison.
 
 ![The illustrated Attention Trap activity](dist/assets/attention-lab-cover.png)
 
 ## Try it
 
-Requirements: **Node.js 22 or later** and a modern browser. Install development test tooling with `npm ci`; the current static app still runs without package installation.
+Requirements: **Node.js 22 or later** and a modern browser.
 
 ```sh
+npm ci
 npm run dev
 ```
 
@@ -34,7 +35,7 @@ Open **http://127.0.0.1:4173**. Choose a lab, or use a direct route:
 - [How Does a Rumor Grow?](http://127.0.0.1:4173/#/rumor)
 - [The Attention Trap](http://127.0.0.1:4173/#/attention)
 
-To use another local port, set `LABS_PORT` before running the command. Any static web server can also serve `dist/`.
+Use `npm run dev -- --port 4174` for a different development port. Run `npm run build` then `npm run preview` to check the production build. A static host can serve `build/`; no server-side application is required. `LABS_PORT` configures the production preview port.
 
 ## The first two labs
 
@@ -60,18 +61,24 @@ Free-text answers can contain personal information if someone types it. Use inve
 
 ```sh
 npm test
+npm run build
 npm run check
+npx playwright install chromium
+npm run test:browser
 ```
 
-`npm test` runs the domain, audio, and preview-server tests. `npm run check` also checks JavaScript syntax and scans for configured credential/private-reference patterns and browser data-request APIs. CI runs the complete check on pushes and pull requests.
+`npm test` runs the domain, audio, and preview-server tests. `npm run check` also checks JavaScript syntax and scans for configured credential/private-reference patterns and browser data-request APIs. CI builds and checks the app, then runs browser flows against both the development server and the production preview on pushes and pull requests.
 
-There are no runtime dependencies. Playwright is a development dependency for browser regression checks; run `npx playwright install chromium` then `npm run test:browser`. CI runs those flows at desktop and narrow widths. Audio regeneration is optional; it requires a privately supplied OpenAI key, and new pitch processing requires FFmpeg with the Rubber Band filter. See [the development notes](docs/DEVELOPMENT.md).
+React and React DOM are the runtime dependencies, bundled locally by Vite. TypeScript, Vite, and Playwright are development dependencies, pinned by the lockfile. Browser checks cover desktop and narrow widths. Audio regeneration is optional; it requires a privately supplied OpenAI key, and new pitch processing requires FFmpeg with the Rubber Band filter. See [the development notes](docs/DEVELOPMENT.md).
 
 ## Project structure
 
 | Path | Responsibility |
 | --- | --- |
-| `dist/app.mjs` | Routing, activity screens, browser saving, timers, and export controls. |
+| `src/main.tsx`, `src/app/App.tsx` | React entry, shared shell, privacy dialog, and temporary activity host. |
+| `dist/activity-controller.mjs` | Existing routes, activity screens, saving, timers, and exports awaiting per-lab conversion; explicit mount/dispose lifecycle. |
+| `dist/app.mjs` | Standalone prototype entry for comparison. |
+| `build/` | Generated static production output; ignored by Git. |
 | `dist/data.mjs` | Lesson content, source graph, passage scoring, progress migration, and result envelopes. |
 | `dist/immersive.mjs` | Illustrated scenes, phone apps, characters, and notifications. |
 | `dist/narration.mjs` | Cached audio playback, cancellation, and optional chimes. |
@@ -84,7 +91,7 @@ The [architecture notes](docs/ARCHITECTURE.md) explain how the modules fit toget
 
 ## Current status
 
-Implemented: two complete standalone activities, illustrated phone interactions, a selected seven-voice cast, browser-local saving, printable notes, JSON exports, and version migration.
+Implemented: React shell and production tooling, regression coverage, two complete standalone activities, illustrated phone interactions, a selected seven-voice cast, browser-local saving, printable notes, JSON exports, and version migration.
 
 Still to verify: smaller-device and assistive-technology flows, learner usability, and final digital content review. The current app has one saved attempt per lab in each browser. Clearing site data removes that work; another person using the same browser can see it.
 

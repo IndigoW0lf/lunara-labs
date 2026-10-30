@@ -2,15 +2,17 @@
 
 ## Local workflow
 
-Use Node.js 22 or later. Run `npm run dev`, open the printed loopback URL, and run `npm run check` before committing. The preview serves only `dist/`; it has no request-body or results endpoint. `LABS_PORT` selects a port and `LABS_HOST` changes the bind address when deliberately needed.
+Use Node.js 22 or later and `npm ci`. `npm run dev` starts Vite; `npm run build` type-checks the React source and writes static output to `build/`. `npm run preview` serves only that output through the bounded static preview server, with no request-body/results endpoint and a restrictive content security policy. `LABS_PORT` selects the production preview port. Vite uses `--port` for development. `npm run dev:legacy` serves the retained standalone prototype.
 
 Browser progress persists between edits. Use synthetic attempts while developing. Export any synthetic notes you need before restarting a lab. Do not commit browser profiles, real response exports, or environment files.
 
 ## React refactor workflow
 
-React + TypeScript + Vite is the selected next stack. See [REACT-MIGRATION.md](REACT-MIGRATION.md) for milestones and acceptance checks. The current checkout still uses the dependency-free preview described above; do not assume `npm install`, a Vite build, TypeScript checking, or automated browser tests exist yet.
+The shared shell now uses React + TypeScript + Vite. `src/app/App.tsx` mounts the existing activity controller into an isolated main element and disposes its timers, audio, and global listeners on unmount. Its children remain outside React reconciliation until per-lab conversion. React owns the header, footer, privacy dialog, and host itself.
 
-Introduce new commands, dependency lockfiles, build output rules, CI checks, and contributor instructions together when the tooling lands. Keep the existing domain/audio tests usable during migration. Use invented attempts and isolated browser storage for regression fixtures; never commit browser profiles or real learner responses.
+`dist/` is still retained source and assets; Vite copies it as public material into ignored `build/` and emits the new React entry there. Do not delete `dist/` as though it were generated output. Removing this temporary source layout is a later migration step.
+
+Run `npm run build`, `npm run check`, and `npm run test:browser`. Install Chromium once with `npx playwright install chromium`. CI runs the six browser cases against Vite and the production preview. Use `LABS_TEST_SERVER='npm run preview' npm run test:browser` to test a built version locally after stopping Vite. Existing pure domain/audio tests remain unchanged. Tests use invented attempts and controlled clocks; keep real learner responses and browser profiles out of fixtures.
 
 ## Optional audio work
 

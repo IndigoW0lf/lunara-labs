@@ -2,13 +2,19 @@
 
 ## Selected next architecture
 
-The project is moving toward React + TypeScript + Vite through a staged refactor. This is a development decision, not a description of the current runtime. The [migration plan](REACT-MIGRATION.md) separates future component/controller boundaries from the existing implementation and defines the evidence needed before cutover. Static hosting, browser-local progress, bundled assets, and the absence of runtime AI requests remain requirements.
+The project is moving toward React + TypeScript + Vite through a staged refactor. The shared shell and tooling are implemented; individual lab screen/state conversion remains pending. The [migration plan](REACT-MIGRATION.md) separates future component/controller boundaries from the existing implementation and defines the evidence needed before cutover. Static hosting, browser-local progress, bundled assets, and the absence of runtime AI requests remain requirements.
 
-## Current runtime boundary
+## Current React shell
 
-`dist/` is the complete static application. HTML loads local CSS and ES modules; images, fonts, and narration are local assets. There is no build step or application API server.
+`index.html` loads `src/main.tsx`. React owns shared navigation, the privacy dialog, and an activity host. A layout effect mounts `dist/activity-controller.mjs` into that host and disposes audio, timers, and global subscriptions on unmount. The controller owns its descendants exclusively. This is a temporary bridge, not the completed lab conversion.
 
-`app.mjs` owns hash routing, screen rendering, events, round clocks, browser saving, and export controls. `immersive.mjs` produces the illustrated phone/character interfaces. `data.mjs` holds versioned content, source links, scoring, restoration, and result serialization. `narration.mjs` plays the fixed audio manifest and cancels active playback when the experience changes.
+Vite bundles React locally and writes `build/`. `dist/` remains the public directory and retained prototype source; do not treat it as build output yet. Development uses Vite's local tooling connections. The production preview retains `connect-src 'none'`; no runtime service is required.
+
+## Retained activity runtime
+
+`dist/` is the complete static application. HTML loads local CSS and ES modules; images, fonts, and narration are local assets. The standalone prototype still has no build step or application API server. The new React shell uses the Vite build described above.
+
+`activity-controller.mjs` owns hash routing, screen rendering, events, round clocks, browser saving, and export controls. `immersive.mjs` produces the illustrated phone/character interfaces. `data.mjs` holds versioned content, source links, scoring, restoration, and result serialization. `narration.mjs` plays the fixed audio manifest and cancels active playback when the experience changes.
 
 ## Progress and results
 

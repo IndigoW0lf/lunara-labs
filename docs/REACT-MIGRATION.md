@@ -2,7 +2,7 @@
 
 Decision recorded: October 30, 2026.
 
-**Status:** approved direction; scope and acceptance criteria documented. Browser regression tests and runtime migration are pending. The working app remains vanilla JavaScript with no npm dependencies.
+**Status:** browser baselines and the React/TypeScript/Vite shell are implemented. The activity screens/state remain in an isolated legacy controller pending their individual conversion. This is a staged migration, not a completed cutover.
 
 ## Why this change
 
@@ -15,8 +15,8 @@ The tradeoff is a dependency graph and build step that the prototype does not cu
 | Milestone | Current status | Completion evidence |
 | --- | --- | --- |
 | Scope and migration decision | Documented | README, roadmap, and this plan agree on the target and current implementation. |
-| Existing behavior baseline | Pending | Repeatable browser flows cover both labs at desktop and narrow widths using synthetic attempts and controlled timing. |
-| React/TypeScript/Vite tooling | Pending | Reproducible install with lockfile, type checking, production build, preview, updated CI and contributor commands. |
+| Existing behavior baseline | Six cases passed CI on the standalone prototype | Repeatable browser flows cover both labs at desktop and narrow widths using synthetic attempts and controlled timing. |
+| React/TypeScript/Vite tooling | Implemented with shared React shell; CI verification recorded per commit | Reproducible install with lockfile, type checking, production build, preview, updated CI and contributor commands. |
 | Shared shell and Rumor migration | Pending | Existing hash routes, transcripts, narration cancellation, source navigation, notes, print/export, and reload behavior pass regression checks. |
 | Attention migration | Pending | Both conditions, timed/untimed modes, cue schedule, pause/recovery, stopping markers, scoring, and exports pass controlled-clock checks. |
 | Default-app cutover | Pending | Production build passes equivalent browser flows; saved attempt fixtures restore; documentation and serving/security configuration match the built app. |
@@ -25,7 +25,7 @@ The tradeoff is a dependency graph and build step that the prototype does not cu
 
 ## Proposed module boundaries
 
-These paths are a target, not directories already implemented.
+`src/app/` now contains the React shell. The remaining paths below are proposed boundaries, not completed modules.
 
 - `src/app/`: application shell, lab catalog, hash-route handling, shared navigation, and top-level error handling.
 - `src/labs/rumor/` and `src/labs/attention/`: lab-specific screens, typed state transitions, and controllers.
@@ -35,7 +35,7 @@ These paths are a target, not directories already implemented.
 - `public/assets/`: bundled illustrations, fonts, and locked narration, retaining their notices and hashes.
 - `tests/`: existing domain/audio checks plus browser regression flows and synthetic legacy-attempt fixtures.
 
-Decide the final layout when introducing the build. The current `dist/` directory is checked-in source; it must not accidentally become disposable build output before its source and assets have been relocated and verified.
+Decide the final layout when introducing the build. The current `dist/` directory remains checked-in source and Vite public material; generated output goes to ignored `build/`. it must not accidentally become disposable build output before its source and assets have been relocated and verified.
 
 Keep scoring and result functions independent of React. Use explicit state transitions for timed rounds and cleanup for timers, event subscriptions, and narration. Rendering must not restart a round, duplicate notifications, or replay audio. Avoid creating a generic activity framework before the migrated labs and first workbench show which pieces should be shared.
 
@@ -60,3 +60,8 @@ During each migration slice, run the existing domain/audio checks, the relevant 
 Switch the default app only after both labs meet the preservation requirements. Update README setup steps, architecture notes, AGENTS.md, CLAUDE.md, scripts, and CI in the same tooling/cutover changes as applicable. A previous Git revision remains available for rollback. Do not describe this migration as shipped until the default runnable app uses the new stack and its evidence is recorded.
 
 Public hosting/domain connection, real Quest persistence, learner trials, and final digital content review remain separate milestones. No printed curriculum or buyer file changes are part of this refactor.
+
+## Commit evidence
+
+- `0471d05`: browser baseline tooling and flows; GitHub CI passed all six desktop/narrow cases against the standalone prototype.
+- Next milestone: React shell/tooling with an isolated mount/dispose controller, strict TypeScript checks for new source, production build, and CI flows against development and production servers. Per-lab JSX/state conversion remains pending.
