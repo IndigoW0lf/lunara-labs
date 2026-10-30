@@ -4,7 +4,7 @@
 
 Lunara Labs turns small investigations into something learners can explore: a phone with messages to trace, a task that notifications interrupt, and field notes that connect the experience to an explanation. It is a companion to The Lunara Edit curricula and also works on its own.
 
-The current prototype is a buildless web app written in vanilla JavaScript. It runs locally with **no account, database, API key, or package installation**.
+The current prototype is a buildless web app written in vanilla JavaScript. It runs locally with **no account, database, API key, or runtime dependencies**.
 
 ## Active development: React refactor
 
@@ -23,7 +23,7 @@ See the [migration plan and completion checklist](docs/REACT-MIGRATION.md) for t
 
 ## Try it
 
-Requirements: **Node.js 22 or later** and a modern browser.
+Requirements: **Node.js 22 or later** and a modern browser. Install development test tooling with `npm ci`; the current static app still runs without package installation.
 
 ```sh
 npm run dev
@@ -65,7 +65,7 @@ npm run check
 
 `npm test` runs the domain, audio, and preview-server tests. `npm run check` also checks JavaScript syntax and scans for configured credential/private-reference patterns and browser data-request APIs. CI runs the complete check on pushes and pull requests.
 
-There are no runtime or npm package dependencies. Audio regeneration is optional; it requires a privately supplied OpenAI key, and new pitch processing requires FFmpeg with the Rubber Band filter. See [the development notes](docs/DEVELOPMENT.md).
+There are no runtime dependencies. Playwright is a development dependency for browser regression checks; run `npx playwright install chromium` then `npm run test:browser`. CI runs those flows at desktop and narrow widths. Audio regeneration is optional; it requires a privately supplied OpenAI key, and new pitch processing requires FFmpeg with the Rubber Band filter. See [the development notes](docs/DEVELOPMENT.md).
 
 ## Project structure
 

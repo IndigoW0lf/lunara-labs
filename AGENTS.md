@@ -1,6 +1,6 @@
 # Lunara Labs development
 
-Read the README and PRIVACY.md before making changes. Use Node.js 22 or later. Run `npm run dev` for a local static preview and `npm run check` before handing off changes. There are no npm dependencies to install for the current app.
+Read the README and PRIVACY.md before making changes. Use Node.js 22 or later. Run `npm run dev` for a local static preview and `npm run check` before handing off changes. Run `npm ci` to install development tooling. Browser regression checks use `npm run test:browser` after `npx playwright install chromium`. The current app has no runtime dependencies.
 
 ## Preserve the learning experience
 
