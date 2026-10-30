@@ -2,7 +2,7 @@
 
 These are genuine next steps for the existing prototype. They can be developed with invented content and synthetic local attempts.
 
-The broader [lab development plan](LAB-DEVELOPMENT-PLAN.md) describes the proposed investigations, physical learning connections, interaction patterns, and engineering challenges. Its candidate labs are planned work; only Rumor Grow and Attention Trap are implemented today.
+The broader [lab development plan](LAB-DEVELOPMENT-PLAN.md) describes the proposed investigations, physical learning connections, interaction patterns, and engineering challenges. Its candidate labs are planned work; Rumor Grow, Attention Trap, and the first Evidence Workbench courtyard case are implemented today.
 
 ## React migration complete
 
@@ -12,7 +12,7 @@ All routes now use React + TypeScript + Vite. The [migration record](REACT-MIGRA
 
 1. Complete the existing labs' usability/accessibility checks and establish repeatable browser-flow tests.
 2. Maintain the completed React foundation and regression checks while refining any observed usability findings.
-3. Build **Evidence Workbench** as the first new vertical slice: accessible card movement, source connections, saved board state, reasoning feedback, and field-note output.
+3. Refine the implemented **Evidence Workbench** courtyard slice from review: card movement, source connections, undo/saved board state, authored feedback, and field notes are present; additional cases remain planned.
 4. Add **Rook's Delivery Routes** and **Moonlight Model** to exercise command sequencing and spatial animation. Extract shared interaction/state components from real implementation needs.
 5. Add the media layer through **Memory Scene Studio** and **Video Observation Station**, with local assets, captions, pause/seek behavior, and timeline observations.
 6. Extend into particle models, branching habitats/group decisions, field observations, and later adult scenarios as source lessons and learner feedback support them.

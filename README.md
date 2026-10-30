@@ -4,13 +4,13 @@
 
 Lunara Labs turns small investigations into something learners can explore: a phone with messages to trace, a task that notifications interrupt, and field notes that connect the experience to an explanation. It is a companion to The Lunara Edit curricula and also works on its own.
 
-The app is a **React + TypeScript + Vite** static application. Both labs, the catalog, and How it works use React; the temporary legacy controller has been removed. It needs no account, database, or API key.
+The app is a **React + TypeScript + Vite** static application. All three labs, the catalog, and How it works use React; the temporary legacy controller has been removed. It needs no account, database, or API key.
 
 ## Development progress
 
 **React migration complete — October 30, 2026.** The conversion preserves the teaching content, approved voices, scoring, hash links, and saved-attempt versions. Runtime source lives in `src/`, static assets in `public/`, and generated production output in ignored `build/`. The build checks that raw source modules are absent and approved audio/font notices are present.
 
-The next development step is **Evidence Workbench**: accessible card movement, source connections, undo, reasoning feedback, and local saving. The broader collection will exercise animation, video, spatial models, and branching investigations.
+**Evidence Workbench is now implemented as a first case**: four courtyard records, claim-based card movement, source trails, undo, authored reasoning feedback, local saving, and printable/downloadable field notes. A separate in-app Parent & Teaching Guide explains the case. See [scope and verification notes](docs/EVIDENCE-WORKBENCH.md). The broader collection will exercise animation, video, spatial models, and branching investigations.
 
 See the [migration record and remaining review checklist](docs/REACT-MIGRATION.md). Software conversion does not complete the separate learner trial, manual assistive-technology review, final content review, or public hosting/domain setup.
 
@@ -29,15 +29,17 @@ Open **http://127.0.0.1:4173**. Choose a lab, or use a direct route:
 
 - [How Does a Rumor Grow?](http://127.0.0.1:4173/#/rumor)
 - [The Attention Trap](http://127.0.0.1:4173/#/attention)
+- [Evidence Workbench](http://127.0.0.1:4173/#/evidence)
 
 Use `npm run dev -- --port 4174` for a different development port. Run `npm run build` then `npm run preview` to check the production build. A static host can serve `build/`; no server-side application is required. `LABS_PORT` configures the production preview port.
 
-## The first two labs
+## The first three labs
 
 | Lab | What the learner does | What the software makes possible |
 | --- | --- | --- |
 | **How Does a Rumor Grow?** | Follow a library notice through five retellings, compare the wording, trace sources, and write a supported message. | Illustrated contacts, voice messages with transcripts, source navigation, explanation-based feedback, and saved field notes. |
 | **The Attention Trap** | Predict a result, search matched passages in quiet and interrupted rounds, then compare their records. | A working simulated phone, timed notifications, optional chimes, pause/recovery, whole-passage counts, checked-part accuracy, and printable results. |
+| **Evidence Workbench** | Arrange courtyard records beside claims, trace repeated measurements, and explain what the records support. | Mouse/touch dragging, equivalent destination menus, undo, persisted board state, source trails, authored feedback, local field notes, and a separate teaching guide. |
 
 An unfinished search still receives a count out of all **85 targets**. Accuracy in the checked portion is reported separately and requires a known stopping point. The activity describes one person's attempt; it does not diagnose attention or establish a universal effect.
 
@@ -80,7 +82,7 @@ npm run test:browser
 
 `npm test` runs the domain, audio, and preview-server tests. `npm run check` also checks JavaScript syntax and scans for configured credential/private-reference patterns and browser data-request APIs. CI builds and checks the app, then runs browser flows against both the development server and the production preview on pushes and pull requests.
 
-React and React DOM are the runtime dependencies, bundled locally by Vite. TypeScript, Vite, and Playwright are development dependencies, pinned by the lockfile. Sixteen browser cases cover desktop and narrow widths, including old-attempt version identity, safe rendering of typed markup, restart, and storage failure. Audio regeneration is optional; it requires a privately supplied OpenAI key, and new pitch processing requires FFmpeg with the Rubber Band filter. See [the development notes](docs/DEVELOPMENT.md).
+React and React DOM are the runtime dependencies, bundled locally by Vite. TypeScript, Vite, and Playwright are development dependencies, pinned by the lockfile. Twenty-six browser cases cover desktop and narrow widths, including old-attempt version identity, safe rendering of typed markup, restart, and storage failure. Audio regeneration is optional; it requires a privately supplied OpenAI key, and new pitch processing requires FFmpeg with the Rubber Band filter. See [the development notes](docs/DEVELOPMENT.md).
 
 ## Project structure
 
@@ -89,6 +91,7 @@ React and React DOM are the runtime dependencies, bundled locally by Vite. TypeS
 | `src/main.tsx`, `src/app/` | React entry, hash routes, catalog/About pages, shared shell, and privacy dialog. |
 | `src/labs/rumor/` | Rumor screens, retained teaching prose, and typed state transitions. |
 | `src/labs/attention/` | Attention screens, sandbox phone, keyboard passage controls, typed round transitions, and clock/storage lifecycle. |
+| `src/labs/evidence/` | Versioned evidence board, source trails, shared pointer movement, reflections, and separate teaching guide. |
 | `src/components/` | Shared layout, phone/portrait primitives, and narration controls. |
 | `src/domain/data.mjs` | Lesson content, source graph, scoring, progress migration, and result envelopes. |
 | `src/audio/` | Canonical cast, manifest, cached playback, cancellation, and optional chimes. |
@@ -102,7 +105,7 @@ The [architecture notes](docs/ARCHITECTURE.md) explain how the modules fit toget
 
 ## Current status
 
-Implemented: React shell and production tooling, regression coverage, two complete standalone activities, illustrated phone interactions, a selected seven-voice cast, browser-local saving, printable notes, JSON exports, and version migration.
+Implemented: React shell and production tooling, regression coverage, three standalone activities, illustrated phone interactions, a selected seven-voice cast, browser-local saving, printable notes, JSON exports, and version migration.
 
 Still to verify: smaller-device and assistive-technology flows, learner usability, and final digital content review. The current app has one saved attempt per lab in each browser. Clearing site data removes that work; another person using the same browser can see it.
 
@@ -112,11 +115,11 @@ Lunara Quest assignments, server-side learner records, purchase entitlements, an
 
 The next stage is to grow Lunara Labs into a varied collection of tangible investigations drawn from the existing curriculum library. Each interaction should help a learner test an idea, see a consequence, and explain what happened. A lesson might become an evidence workbench, a robot route, a movable light-and-orbit model, or a video observation station.
 
-**The following are proposed experiences, not features already implemented:**
+**Evidence Workbench has its first implemented case; the other experiences below remain proposed:**
 
 | Proposed lab | Interaction and learning purpose |
 | --- | --- |
-| **Evidence Workbench** | Move evidence onto claims, trace source connections, and revise an explanation as new information arrives. |
+| **Evidence Workbench — first case implemented** | Move four courtyard records beside claims, trace source connections, undo placements, and explain what these observations support. More cases remain planned. |
 | **Rook's Delivery Routes** | Arrange command blocks, animate a delivery robot through a map, and step back through a route to debug it. |
 | **Moonlight Model** | Move a light, Earth, and Moon model; predict the view, then connect the simulation to a ball-and-lamp activity. |
 | **Memory Scene Studio** | Observe a short original scene, reconstruct its details, then compare the reconstruction with the record. |
