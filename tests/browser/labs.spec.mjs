@@ -131,3 +131,40 @@ test('Rumor: blocked saving keeps typed notes available for local export',async(
  expect(result.responses.message).toBe('Synthetic unsaved note.');expect(result.labVersion).toBe('0.2.0');
  expect((await saved(page,'rumor')).state.message).toBe('Synthetic old note.');
 });
+
+
+test('Attention: untimed clock, running reload, keyboard marks, and route-away recovery',async({page})=>{
+ await page.clock.install();
+ await page.goto('/#/attention');await page.locator('#start').click();
+ await page.locator('input[name="prediction"][value="same"]').check();
+ await page.locator('input[name="order"][value="interrupted"]').check();
+ await page.locator('#untimed').check();await page.locator('#prepare').click();await page.locator('#begin-round').click();
+ const first=page.locator('[data-char="0"]');await first.focus();await first.press('Space');await expect(first).toHaveAttribute('aria-pressed','true');
+ await first.press('ArrowRight');await expect(page.locator('[data-char="1"]')).toBeFocused();
+ await page.clock.runFor(21000);expect((await saved(page,'attention')).state.active.fired).toEqual([20]);
+ await page.reload();await expect(page.locator('#pause-round')).toHaveText('Resume round');
+ const recovered=(await saved(page,'attention')).state.active.elapsed;
+ await page.clock.runFor(30000);await page.locator('#pause-round').click();
+ await page.clock.runFor(2000);expect((await saved(page,'attention')).state.active.fired).toEqual([20]);
+ await expect(page.locator('[data-char="0"]')).toHaveAttribute('aria-pressed','true');
+ await page.clock.runFor(110000);await expect(page.locator('#finish-round')).toBeVisible();
+ const running=(await saved(page,'attention')).state.active;
+ expect(running.elapsed).toBeGreaterThan(120);expect(running.fired).toEqual([20,45,70,95]);expect(running.pauses).toBeGreaterThan(0);
+ await page.getByRole('link',{name:'Explore the labs',exact:true}).click();
+ await expect(page.getByRole('heading',{name:'Choose your first investigation',exact:true})).toBeVisible();
+ const stopped=(await saved(page,'attention')).state.active;
+ expect(stopped.status).toBe('paused');expect(stopped.elapsed).toBeGreaterThan(recovered);
+ await page.goto('/#/attention');await expect(page.locator('#pause-round')).toHaveText('Resume round');
+});
+
+test('Attention: sandbox apps, demo notifications, and silent-by-default settings persist',async({page})=>{
+ await page.goto('/#/attention');
+ await page.locator('[data-sandbox-app="settings"]').click();await expect(page.locator('#sandbox-sound')).toHaveAttribute('aria-checked','false');
+ await page.locator('[data-sandbox-app="home"]').click();await page.locator('[data-sandbox-app="notes"]').click();await page.locator('[data-demo-notification]').click();
+ await page.locator('.demo-banner').click();await expect(page.locator('.chat-person')).toContainText('Sam');
+ await page.locator('[data-sandbox-app="notes"]').click();await page.reload();
+ await expect(page.locator('.notebook-screen')).toBeVisible();
+ const attempt=(await saved(page,'attention')).state;
+ expect(attempt.sandboxVisits).toEqual(['settings','home','notes','messages']);expect(attempt.demoNotificationCount).toBe(1);expect(attempt.demoNotification).toBe(false);
+ await page.locator('#start').click();await expect(page.locator('#round-sound')).not.toBeChecked();
+});

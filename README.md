@@ -4,13 +4,13 @@
 
 Lunara Labs turns small investigations into something learners can explore: a phone with messages to trace, a task that notifications interrupt, and field notes that connect the experience to an explanation. It is a companion to The Lunara Edit curricula and also works on its own.
 
-The app now starts through a **React + TypeScript + Vite shell**. Rumor now uses React screens and typed state. Attention and the catalog/About screens still run through a temporary controller adapter. It needs no account, database, or API key.
+The app now starts through a **React + TypeScript + Vite shell**. Both Rumor and Attention now use React screens and typed state. The catalog/About screens still run through a temporary controller adapter. It needs no account, database, or API key.
 
 ## Active development: React refactor
 
 **The next development phase is a staged migration to React + TypeScript + Vite**, followed by the first new Evidence Workbench activity. The goal is to give the growing collection shared activity components, explicit state/result types, and a maintainable foundation for accessible card movement, animation, and video.
 
-**Status — October 30, 2026:** browser baselines passed all six desktop/narrow cases in CI. React, TypeScript, Vite, the shared shell, and a production build are implemented and passed the same six browser cases against both development and production output. Rumor screen/state conversion is implemented, including narration, source navigation, notes, export, restart, and restoration of older attempts. Attention screen/state conversion remains pending.
+**Status — October 30, 2026:** browser baselines passed all six desktop/narrow cases in CI. React, TypeScript, Vite, the shared shell, and a production build are implemented and passed the same six browser cases against both development and production output. Rumor screen/state conversion is implemented, including narration, source navigation, notes, export, restart, and restoration of older attempts. Attention now has React screens, typed round transitions, and an elapsed-time clock that preserves timing across renders. Catalog/About conversion and controller cleanup remain pending.
 
 1. Establish repeatable browser checks for both existing labs, including timers, pause/reload recovery, narration, notes, and exports.
 2. Introduce React, TypeScript, and Vite; migrate the shell and each lab incrementally while preserving saved attempts and current behavior.
@@ -85,16 +85,17 @@ npm run test:browser
 
 `npm test` runs the domain, audio, and preview-server tests. `npm run check` also checks JavaScript syntax and scans for configured credential/private-reference patterns and browser data-request APIs. CI builds and checks the app, then runs browser flows against both the development server and the production preview on pushes and pull requests.
 
-React and React DOM are the runtime dependencies, bundled locally by Vite. TypeScript, Vite, and Playwright are development dependencies, pinned by the lockfile. Ten browser cases cover desktop and narrow widths, including old-attempt version identity, safe rendering of typed markup, restart, and storage failure. Audio regeneration is optional; it requires a privately supplied OpenAI key, and new pitch processing requires FFmpeg with the Rubber Band filter. See [the development notes](docs/DEVELOPMENT.md).
+React and React DOM are the runtime dependencies, bundled locally by Vite. TypeScript, Vite, and Playwright are development dependencies, pinned by the lockfile. Fourteen browser cases cover desktop and narrow widths, including old-attempt version identity, safe rendering of typed markup, restart, and storage failure. Audio regeneration is optional; it requires a privately supplied OpenAI key, and new pitch processing requires FFmpeg with the Rubber Band filter. See [the development notes](docs/DEVELOPMENT.md).
 
 ## Project structure
 
 | Path | Responsibility |
 | --- | --- |
-| `src/main.tsx`, `src/app/App.tsx` | React entry, hash-route subscription, shared shell, privacy dialog, and temporary Attention/activity host. |
-| `src/labs/rumor/` | React activity screens, retained teaching prose, and typed state transitions. |
+| `src/main.tsx`, `src/app/App.tsx` | React entry, hash-route subscription, shared shell, privacy dialog, and temporary catalog/About host. |
+| `src/labs/rumor/` | Rumor screens, retained teaching prose, and typed state transitions. |
+| `src/labs/attention/` | Attention screens, sandbox phone, keyboard passage controls, typed round transitions, and clock/storage lifecycle. |
 | `src/components/` | Shared layout, phone/portrait primitives, and narration controls. |
-| `dist/activity-controller.mjs` | Attention, catalog/About screens, and standalone prototype fallback; explicit mount/dispose lifecycle. |
+| `dist/activity-controller.mjs` | Catalog/About screens and standalone prototype fallback; explicit mount/dispose lifecycle. |
 | `dist/app.mjs` | Standalone prototype entry for comparison. |
 | `build/` | Generated static production output; ignored by Git. |
 | `dist/data.mjs` | Lesson content, source graph, passage scoring, progress migration, and result envelopes. |
