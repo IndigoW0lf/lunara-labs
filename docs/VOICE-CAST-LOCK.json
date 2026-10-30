@@ -1,0 +1,57 @@
+{
+  "approvedOn": "2026-10-29",
+  "approvedBy": "The Lunara Edit",
+  "approvalBasis": "Final character cast: Jo at +1 semitone, Ari at +3, with shared 1.05x playback.",
+  "playbackRate": 1.05,
+  "clips": {
+    "A": {
+      "name": "Library notice",
+      "voice": "sage",
+      "pitchSemitones": 0,
+      "url": "assets/audio/a-edf1daaaf4563f02.mp3",
+      "sha256": "151dbe4ce1317adc88f054b60c889ca6358b8de0bdf97306e90492559f00a459"
+    },
+    "B": {
+      "name": "Sam",
+      "voice": "alloy",
+      "pitchSemitones": 0,
+      "url": "assets/audio/b-e1a00a4d15958397.mp3",
+      "sha256": "62dc2297b490ec010358cfbe931852b238013a6e4cd6f32edf598a9eaeebeeaa"
+    },
+    "C": {
+      "name": "Jo",
+      "voice": "nova",
+      "pitchSemitones": 1,
+      "url": "assets/audio/c-7d2cf91a3c78d88b.mp3",
+      "sha256": "4ed2fbd21d912872fdd746a598f7e1e188090b4e9296d40ee9376715429607ba"
+    },
+    "D": {
+      "name": "Ren",
+      "voice": "echo",
+      "pitchSemitones": 0,
+      "url": "assets/audio/d-af0ac58cc54c6771.mp3",
+      "sha256": "a0cf5f9d0f7b4fdb80de8a6253a707581caa8fe32927b5b4c6c3304ee94d4a23"
+    },
+    "E": {
+      "name": "Lee",
+      "voice": "fable",
+      "pitchSemitones": 0,
+      "url": "assets/audio/e-e1d94dc8e19f3081.mp3",
+      "sha256": "5e2d7465129c1e789aa617fc2bac381827055672ce652b810437736843a51706"
+    },
+    "F": {
+      "name": "Ari",
+      "voice": "coral",
+      "pitchSemitones": 3,
+      "url": "assets/audio/f-f0f06ad282e3e853.mp3",
+      "sha256": "3e4492caa1acafc6cceecbcc9abf6e0fe3c7262836c73e5d997ef84b8b41aea9"
+    },
+    "guide": {
+      "name": "Your guide",
+      "voice": "marin",
+      "pitchSemitones": 0,
+      "url": "assets/audio/guide-9f882ea9fc9c26f4.mp3",
+      "sha256": "14f137ccab3ed4fdc12d3a02addc54e81f10d2ec15488f894a4ec6c294ddf89e"
+    }
+  }
+}

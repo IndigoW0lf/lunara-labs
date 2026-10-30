@@ -1,0 +1,84 @@
+// Fixed, AI-generated dialogue clips. Regenerate when text, direction, model or voice changes.
+export const VOICE_CLIPS={
+  "A": {
+    "id": "A",
+    "name": "Library notice",
+    "model": "gpt-4o-mini-tts",
+    "voice": "sage",
+    "instructions": "Read the exact words in clear natural English. Read a short community notice clearly and calmly, with practical, matter-of-fact warmth.",
+    "text": "Saturday’s star-viewing session at Alder Library will move from the roof terrace to the courtyard while a new handrail is fitted. It will still begin at 7 p.m. Indoor rooms will be open as usual.",
+    "url": "assets/audio/a-edf1daaaf4563f02.mp3",
+    "bytes": 236160,
+    "sha256": "151dbe4ce1317adc88f054b60c889ca6358b8de0bdf97306e90492559f00a459"
+  },
+  "B": {
+    "id": "B",
+    "name": "Sam",
+    "model": "gpt-4o-mini-tts",
+    "voice": "alloy",
+    "instructions": "Read the exact words in clear natural English. Portray a youthful school-age character chatting with a friend. Use a light, naturally higher register with very little chest resonance, bright curiosity, and relaxed everyday phrasing. Keep the voice natural and believable, without baby talk, squeaking, or a theatrical narrator delivery.",
+    "text": "Saturday’s star viewing won’t be on the library roof. They are fitting a new handrail.",
+    "url": "assets/audio/b-e1a00a4d15958397.mp3",
+    "bytes": 85632,
+    "sha256": "62dc2297b490ec010358cfbe931852b238013a6e4cd6f32edf598a9eaeebeeaa"
+  },
+  "C": {
+    "id": "C",
+    "name": "Jo",
+    "model": "gpt-4o-mini-tts",
+    "voice": "nova",
+    "instructions": "Read the exact words in clear natural English. Portray a youthful school-age character thinking aloud to a friend. Use a light, naturally higher register with very little chest resonance and an easy, curious conversational rhythm. Leave a small questioning lift on maybe. Keep the uncertainty gentle; avoid an adult presenter delivery, baby talk, squeaking, or an ominous tone.",
+    "text": "The library roof is shut for repairs on Saturday. Maybe something broke.",
+    "pitchSemitones": 1,
+    "appliedPitchSemitones": 1,
+    "url": "assets/audio/c-7d2cf91a3c78d88b.mp3",
+    "bytes": 81837,
+    "sha256": "4ed2fbd21d912872fdd746a598f7e1e188090b4e9296d40ee9376715429607ba"
+  },
+  "D": {
+    "id": "D",
+    "name": "Ren",
+    "model": "gpt-4o-mini-tts",
+    "voice": "echo",
+    "instructions": "Read the exact words in clear natural English. Speak with lively surprise, as a friend passing along news. Keep it natural, without shouting or villainy.",
+    "text": "Something broke on the roof, so Saturday’s star viewing is canceled.",
+    "url": "assets/audio/d-af0ac58cc54c6771.mp3",
+    "bytes": 72960,
+    "sha256": "a0cf5f9d0f7b4fdb80de8a6253a707581caa8fe32927b5b4c6c3304ee94d4a23"
+  },
+  "E": {
+    "id": "E",
+    "name": "Lee",
+    "model": "gpt-4o-mini-tts",
+    "voice": "fable",
+    "instructions": "Read the exact words in clear natural English. Speak earnestly and a little uncertainly to a friend. Keep might be closed tentative, not definitive.",
+    "text": "The library roof needs repairs. I heard the library might be closed Saturday.",
+    "url": "assets/audio/e-e1d94dc8e19f3081.mp3",
+    "bytes": 104064,
+    "sha256": "5e2d7465129c1e789aa617fc2bac381827055672ce652b810437736843a51706"
+  },
+  "F": {
+    "id": "F",
+    "name": "Ari",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "instructions": "Read the exact words in clear natural English. Voice Ari as a 13-year-old girl telling another kid some news in casual American English. Use a noticeably high, light head voice with small vocal weight, bright youthful resonance, and clear, quick everyday phrasing. Keep the confidence casual and matter-of-fact. Sound like a young teen speaking to a friend; avoid the low, rich chest register and polished cadence of an adult narrator. Do not add laughter, baby talk, exaggerated squeaking, or melodrama.",
+    "text": "Alder Library is closed Saturday. People keep saying the building has a problem.",
+    "pitchSemitones": 3,
+    "appliedPitchSemitones": 3,
+    "url": "assets/audio/f-f0f06ad282e3e853.mp3",
+    "bytes": 99501,
+    "sha256": "3e4492caa1acafc6cceecbcc9abf6e0fe3c7262836c73e5d997ef84b8b41aea9"
+  },
+  "guide": {
+    "id": "guide",
+    "name": "Your guide",
+    "model": "gpt-4o-mini-tts",
+    "voice": "marin",
+    "instructions": "Read the exact words in clear natural English. A warm, curious learning companion giving a learner time to explore. Clear, unhurried and personable, never sing-song.",
+    "text": "Here’s a phone you can explore. Open Notes first, then try a notification and see where it takes you. When you come back, notice what helps you find your place again.",
+    "url": "assets/audio/guide-9f882ea9fc9c26f4.mp3",
+    "bytes": 168960,
+    "sha256": "14f137ccab3ed4fdc12d3a02addc54e81f10d2ec15488f894a4ec6c294ddf89e"
+  }
+};

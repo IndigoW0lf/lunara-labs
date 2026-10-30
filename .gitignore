@@ -1,0 +1,17 @@
+.env
+.env.*
+!.env.example
+node_modules/
+.DS_Store
+.claude/settings.local.json
+.openai/
+.vercel/
+playwright-report/
+test-results/
+coverage/
+local-data/
+exports/
+*.log
+*.tar.gz
+*.bundle
+*.results.json
