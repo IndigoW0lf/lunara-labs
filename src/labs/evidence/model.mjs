@@ -139,6 +139,7 @@ export function moveRecord(state, id, target) {
     placements: { ...state.placements, [id]: target },
     history: [...state.history.slice(-29), { ...state.placements }],
     checked: false,
+    complete: false,
   };
 }
 /** @param {BoardState} state @returns {BoardState} */
@@ -149,6 +150,7 @@ export function undoMove(state) {
     placements: { ...state.history.at(-1) },
     history: state.history.slice(0, -1),
     checked: false,
+    complete: false,
   };
 }
 /** @param {unknown} raw @returns {BoardState} */
@@ -157,7 +159,7 @@ export function restoreBoard(raw) {
   if (!raw || typeof raw !== 'object' || raw['version'] !== EVIDENCE_VERSION) return base;
   const saved = raw['state'];
   if (!saved || !validPlacements(saved.placements)) return base;
-  return {
+  const restored = {
     ...base,
     placements: { ...saved.placements },
     history: Array.isArray(saved.history)
@@ -174,6 +176,24 @@ export function restoreBoard(raw) {
     discussed: saved.discussed === true,
     complete: saved.complete === true,
   };
+  const placed = records.every((record) => restored.placements[record.id] !== 'unplaced');
+  restored.checked = placed && restored.checked;
+  restored.complete = restored.complete && canFinishBoard(restored);
+  if (restored.step >= 2 && !restored.checked) restored.step = 1;
+  if (restored.step === 3 && !restored.complete) restored.step = 2;
+  return restored;
+}
+/** @param {BoardState} state */
+export function canFinishBoard(state) {
+  return (
+    state.checked &&
+    records.every((record) => state.placements[record.id] !== 'unplaced') &&
+    (state.discussed || (!!state.explanation.trim() && !!state.nextCheck.trim()))
+  );
+}
+/** @param {BoardState} state @returns {BoardState} */
+export function finishBoard(state) {
+  return canFinishBoard(state) ? { ...state, step: 3, complete: true } : state;
 }
 /** @param {BoardState} state */
 export function reviewBoard(state) {

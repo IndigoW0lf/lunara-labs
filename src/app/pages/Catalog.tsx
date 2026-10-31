@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react';
-import { restoreProgress } from '../../domain/data.mjs';
+import { restoreRumor } from '../../labs/rumor/state';
+import { restoreAttention } from '../../labs/attention/state';
 import { labCatalog as labs } from '../../domain/catalog.mjs';
 import { restoreBoard } from '../../labs/evidence/model.mjs';
 import { Icon, Portrait } from '../../components/Phone';
@@ -12,7 +13,9 @@ function readStatuses(): Record<string, { step: number; complete: boolean }> {
           slug,
           slug === 'evidence'
             ? restoreBoard(raw)
-            : restoreProgress(raw, { step: 0, complete: false }),
+            : slug === 'rumor'
+              ? restoreRumor(raw)
+              : restoreAttention(raw),
         ];
       } catch {
         return [slug, { step: 0, complete: false }];

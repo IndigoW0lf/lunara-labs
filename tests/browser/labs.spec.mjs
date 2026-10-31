@@ -94,7 +94,9 @@ test('Narration controls stop on navigation and disclosure stays on About', asyn
   await expect(page.getByRole('heading', { name: 'About the voices' })).toBeVisible();
   await expect(page.locator('main')).toContainText('AI-generated');
   await page.getByRole('button', { name: 'Where your work is saved' }).click();
-  await expect(page.locator('#privacy')).toBeVisible();
+  await expect(
+    page.getByRole('dialog', { name: 'Your work stays in this browser.' }),
+  ).toBeVisible();
   await page.getByRole('button', { name: 'Got it', exact: true }).click();
   await expect(page.locator('#privacy')).not.toBeVisible();
 });
@@ -259,7 +261,9 @@ test('Catalog and About: saved labels, anchor focus, fallback routes and disclos
   await expect(page.getByRole('heading', { level: 1 })).toBeFocused();
   await expect(page.locator('main')).toContainText('The character voices are AI-generated.');
   await page.getByRole('button', { name: 'Where your work is saved' }).click();
-  await expect(page.locator('#privacy')).toBeVisible();
+  await expect(
+    page.getByRole('dialog', { name: 'Your work stays in this browser.' }),
+  ).toBeVisible();
   await page.getByRole('button', { name: 'Got it', exact: true }).click();
   await page.goto('/#/missing-lab');
   await expect(
@@ -267,4 +271,77 @@ test('Catalog and About: saved labels, anchor focus, fallback routes and disclos
   ).toBeVisible();
   expect(await page.evaluate(() => localStorage.getItem('lunara-labs:1:attention'))).toBeNull();
   expect((await saved(page, 'rumor')).version).toBe('0.1.0');
+});
+
+test('Rumor: damaged saved fields recover while valid text and version survive export', async ({
+  page,
+}) => {
+  const errors = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.addInitScript(() =>
+    localStorage.setItem(
+      'lunara-labs:1:rumor',
+      JSON.stringify({
+        version: '0.1.0',
+        state: {
+          step: 3,
+          visited: null,
+          selected: {},
+          answers: [],
+          message: 'Synthetic rescued note',
+          reflection: null,
+        },
+      }),
+    ),
+  );
+  await page.goto('/#/rumor');
+  await expect(page.locator('#useful-message')).toHaveValue('Synthetic rescued note');
+  await page.locator('#rumor-finish').click();
+  const result = await resultDownload(page);
+  expect(result.labVersion).toBe('0.1.0');
+  expect(result.responses.message).toBe('Synthetic rescued note');
+  expect(result.responses.visitedMessages).toEqual([]);
+  expect(errors).toEqual([]);
+});
+
+test('Attention: partial saved round has safe controls and retains its elapsed time', async ({
+  page,
+}) => {
+  const errors = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.clock.install();
+  await page.addInitScript(() =>
+    localStorage.setItem(
+      'lunara-labs:1:attention',
+      JSON.stringify({
+        version: '0.2.0',
+        state: {
+          step: 2,
+          active: {
+            condition: 'interrupted',
+            status: 'paused',
+            elapsed: 35,
+            selected: null,
+            fired: [20],
+            alertIndex: 99,
+          },
+          order: ['interrupted', 'quiet'],
+          reflection: 'Synthetic retained note',
+        },
+      }),
+    ),
+  );
+  await page.goto('/#/attention');
+  await expect(page.locator('#pause-round')).toHaveText('Resume round');
+  await page.locator('#pause-round').click();
+  await page.clock.runFor(2000);
+  // Running ticks are persisted once per second; pause flushes the precise elapsed value.
+  await page.locator('#pause-round').click();
+  const attempt = (await saved(page, 'attention')).state;
+  expect(attempt.active.status).toBe('paused');
+  expect(attempt.active.elapsed).toBeGreaterThanOrEqual(37);
+  expect(attempt.active.fired).toEqual([20]);
+  expect(attempt.activityVersion).toBe('0.2.0');
+  expect(attempt.reflection).toBe('Synthetic retained note');
+  expect(errors).toEqual([]);
 });

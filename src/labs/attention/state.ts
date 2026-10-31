@@ -4,7 +4,17 @@ import {
   passages,
   scoreRound,
   duePings,
+  PING_TIMES,
 } from '../../domain/data.mjs';
+import {
+  isRecord,
+  oneOf,
+  text,
+  nonNegative,
+  integer,
+  step,
+  version,
+} from '../../persistence/validation';
 export const ATTENTION_KEY = 'lunara-labs:1:attention';
 export type Condition = 'quiet' | 'interrupted';
 export type Round = {
@@ -80,22 +90,151 @@ export function initialAttention(): AttentionState {
     complete: false,
   };
 }
+// Restored rounds get the same defaults as newly started rounds.
+function initialRound(condition: Condition, phoneSound = false): Round {
+  return {
+    condition,
+    status: 'running',
+    phase: 'working',
+    selected: [],
+    elapsed: 0,
+    fired: [],
+    cueVisible: false,
+    pauses: 0,
+    marker: null,
+    uncertain: false,
+    effort: '',
+    lost: '',
+    notes: '',
+    phoneSound,
+    chimesPlayed: 0,
+    openedNotifications: [],
+    presentation: 'practice-phone',
+    phonePanel: 'notes',
+  };
+}
+
+function restoreRound(value: unknown, condition: Condition): Round | null {
+  if (!isRecord(value)) return null;
+  const limit = passages[condition].length - 1;
+  const marker = value.marker ?? (isRecord(value.score) ? value.score.lastChecked : null);
+  const effort = oneOf(value.effort, ['1', '2', '3', '4', '5'])
+    ? Number(value.effort)
+    : value.effort;
+  const round: Round = {
+    ...initialRound(condition),
+    status: oneOf(value.status, ['running', 'paused', 'stopped']) ? value.status : 'paused',
+    phase: value.phase === 'record' || value.status === 'stopped' ? 'record' : 'working',
+    selected: Array.isArray(value.selected)
+      ? [...new Set(value.selected.filter((index): index is number => integer(index, 0, limit)))]
+      : [],
+    elapsed: nonNegative(value.elapsed),
+    fired: Array.isArray(value.fired)
+      ? [...new Set(value.fired.filter((time): time is number => oneOf(time, PING_TIMES)))]
+      : [],
+    cueVisible: value.cueVisible === true,
+    pauses: Math.floor(nonNegative(value.pauses)),
+    marker: integer(marker, -1, limit) ? marker : null,
+    uncertain: value.uncertain === true,
+    effort: integer(effort, 1, 5) ? effort : '',
+    lost: text(value.lost),
+    notes: text(value.notes),
+    phoneSound: value.phoneSound === true,
+    chimesPlayed: Math.floor(nonNegative(value.chimesPlayed)),
+    openedNotifications: Array.isArray(value.openedNotifications)
+      ? value.openedNotifications.flatMap((item) =>
+          isRecord(item) &&
+          integer(item.cue, 1, 4) &&
+          typeof item.at === 'number' &&
+          Number.isFinite(item.at) &&
+          item.at >= 0
+            ? [{ cue: item.cue, at: item.at }]
+            : [],
+        )
+      : [],
+    presentation: text(value.presentation, 'practice-phone'),
+    phonePanel: value.phonePanel === 'message' ? 'message' : 'notes',
+    ...(typeof value.pauseReason === 'string' ? { pauseReason: value.pauseReason } : {}),
+    recovered: value.recovered === true,
+    alertIndex: integer(value.alertIndex, 0, 3) ? value.alertIndex : 0,
+    dismissedNotifications: Math.floor(nonNegative(value.dismissedNotifications)),
+  };
+  // Scores are derived from validated marks; a stored score is not authoritative.
+  if (Object.hasOwn(value, 'score'))
+    round.score = round.uncertain
+      ? null
+      : scoreRound(passages[condition], round.selected, round.marker);
+  return round;
+}
+
 export function restoreAttention(raw: unknown): AttentionState {
-  const st: AttentionState = restoreProgress(raw, initialAttention());
-  if (st.active?.status === 'running')
-    st.active = {
-      ...st.active,
-      status: 'paused',
-      recovered: true,
-      pauses: (st.active.pauses || 0) + 1,
-    };
-  return st;
+  const base = initialAttention();
+  const saved: unknown = restoreProgress(raw, base);
+  if (!isRecord(saved)) return base;
+  const conditions = ['quiet', 'interrupted'] as const;
+  const apps = ['home', 'notes', 'messages', 'photos', 'settings'] as const;
+  const rounds: AttentionState['rounds'] = {};
+  for (const condition of conditions) {
+    const round = isRecord(saved.rounds) ? restoreRound(saved.rounds[condition], condition) : null;
+    if (round) rounds[condition] = round;
+  }
+  const active =
+    isRecord(saved.active) && oneOf(saved.active.condition, conditions)
+      ? restoreRound(saved.active, saved.active.condition)
+      : null;
+  if (active?.status === 'running') {
+    active.status = 'paused';
+    active.recovered = true;
+    active.pauses += 1;
+  }
+  const order =
+    Array.isArray(saved.order) &&
+    saved.order.length === 2 &&
+    saved.order[0] !== saved.order[1] &&
+    saved.order.every((item) => oneOf(item, conditions))
+      ? (saved.order as Condition[])
+      : null;
+  let restoredStep = step(saved.step);
+  // A partial/damaged attempt must leave a reachable way to continue.
+  if (restoredStep >= 3 && (!rounds.quiet || !rounds.interrupted)) restoredStep = 2;
+  if (restoredStep === 2 && !active && !order) restoredStep = 1;
+  return {
+    ...base,
+    activityVersion: version(
+      saved.activityVersion,
+      isRecord(raw) ? version(raw.version, base.activityVersion) : base.activityVersion,
+    ),
+    step: restoredStep,
+    prediction: text(saved.prediction),
+    order,
+    untimed: saved.untimed === true,
+    rounds,
+    active,
+    reflection: text(saved.reflection),
+    conclusion: integer(saved.conclusion, 0, 3) ? saved.conclusion : null,
+    complete: saved.complete === true && !!rounds.quiet && !!rounds.interrupted,
+    phoneSound: saved.phoneSound === true,
+    coinResult: text(saved.coinResult),
+    breakStart: nonNegative(saved.breakStart),
+    breakShortened: saved.breakShortened === true,
+    sandboxApp: oneOf(saved.sandboxApp, apps) ? saved.sandboxApp : 'home',
+    sandboxVisits: Array.isArray(saved.sandboxVisits)
+      ? [...new Set(saved.sandboxVisits.filter((app): app is string => oneOf(app, apps)))]
+      : [],
+    demoNotification: saved.demoNotification === true,
+    demoNotificationCount: Math.floor(nonNegative(saved.demoNotificationCount)),
+  };
 }
 export function attentionReducer(st: AttentionState, action: Action): AttentionState {
   const a = st.active;
   switch (action.type) {
     case 'select': {
-      if (!a || (!action.marking && a.status !== 'running')) return st;
+      if (
+        !a ||
+        !integer(action.index, 0, passages[a.condition].length - 1) ||
+        (action.marking ? a.phase !== 'record' : a.status !== 'running' || a.phase !== 'working')
+      )
+        return st;
       return {
         ...st,
         active: {
@@ -123,26 +262,7 @@ export function attentionReducer(st: AttentionState, action: Action): AttentionS
           Object.keys(st.rounds).length === 1
             ? action.now - (st.breakStart || 0) < 60000
             : st.breakShortened,
-        active: {
-          condition,
-          status: 'running',
-          phase: 'working',
-          selected: [],
-          elapsed: 0,
-          fired: [],
-          cueVisible: false,
-          pauses: 0,
-          marker: null,
-          uncertain: false,
-          effort: '',
-          lost: '',
-          notes: '',
-          phoneSound: !!st.phoneSound,
-          chimesPlayed: 0,
-          openedNotifications: [],
-          presentation: 'practice-phone',
-          phonePanel: 'notes',
-        },
+        active: initialRound(condition, !!st.phoneSound),
       };
     }
     case 'tick': {
