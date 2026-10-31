@@ -1,0 +1,7 @@
+node_modules/
+build/
+public/
+coverage/
+playwright-report/
+test-results/
+package-lock.json

@@ -9,18 +9,22 @@
   },
   "scripts": {
     "dev": "vite",
-    "test": "node --test tests/*.test.mjs",
+    "test": "node --import tsx --test tests/*.test.mjs",
     "check": "node scripts/check.mjs",
     "audio:generate": "node scripts/generate-narration.mjs",
     "test:browser": "playwright test",
     "build": "tsc --noEmit && vite build && node scripts/check-build.mjs",
     "typecheck": "tsc --noEmit",
-    "preview": "node scripts/serve.mjs"
+    "preview": "node scripts/serve.mjs",
+    "format": "prettier --write src scripts tests *.mjs *.json .github/workflows/*.yml",
+    "format:check": "prettier --check src scripts tests *.mjs *.json .github/workflows/*.yml"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "prettier": "3.9.10",
+    "tsx": "4.23.15",
     "typescript": "^7.0.2",
     "vite": "^8.3.5"
   },

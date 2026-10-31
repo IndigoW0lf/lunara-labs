@@ -1,20 +1,55 @@
-import {test,expect} from '@playwright/test';
-test.use({hasTouch:true});
-test('evidence: touch handle scrolls to a claim and places a record',async({page})=>{
- await page.goto('/#/evidence');await page.locator('#open-workbench').click();
- const handle=page.locator('[data-drag-card="D"]');await handle.scrollIntoViewIfNeeded();const box=await handle.boundingBox(),height=page.viewportSize().height;
- const session=await page.context().newCDPSession(page);
- const x=box.x+box.width/2,y=box.y+box.height/2;
- await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});
- await session.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x,y:height-15}]});
- const target=page.locator('[data-evidence-target="recorded"]');
- await expect.poll(async()=>{const b=await target.boundingBox();return b.y<height-150;},{timeout:10000}).toBe(true);
- const destination=await target.boundingBox();const endX=destination.x+Math.min(70,destination.width/2),endY=Math.max(90,Math.min(height-110,destination.y+75));
- await session.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:endX,y:endY}]});
- await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
- await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem('lunara-labs:1:evidence')).state.placements.D)).toBe('recorded');
- await expect(target.locator('[data-evidence-card="D"]')).toBeVisible();
- await page.locator('#undo-evidence').scrollIntoViewIfNeeded();const undo=await page.locator('#undo-evidence').boundingBox();await page.touchscreen.tap(undo.x+undo.width/2,undo.y+undo.height/2);
- await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem('lunara-labs:1:evidence')).state.placements.D)).toBe('unplaced');
- await session.detach();
+import { test, expect } from '@playwright/test';
+test.use({ hasTouch: true });
+test('evidence: touch handle scrolls to a claim and places a record', async ({ page }) => {
+  await page.goto('/#/evidence');
+  await page.locator('#open-workbench').click();
+  const handle = page.locator('[data-drag-card="D"]');
+  await handle.scrollIntoViewIfNeeded();
+  const box = await handle.boundingBox(),
+    height = page.viewportSize().height;
+  const session = await page.context().newCDPSession(page);
+  const x = box.x + box.width / 2,
+    y = box.y + box.height / 2;
+  await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
+  await session.send('Input.dispatchTouchEvent', {
+    type: 'touchMove',
+    touchPoints: [{ x, y: height - 15 }],
+  });
+  const target = page.locator('[data-evidence-target="recorded"]');
+  await expect
+    .poll(
+      async () => {
+        const b = await target.boundingBox();
+        return b.y < height - 150;
+      },
+      { timeout: 10000 },
+    )
+    .toBe(true);
+  const destination = await target.boundingBox();
+  const endX = destination.x + Math.min(70, destination.width / 2),
+    endY = Math.max(90, Math.min(height - 110, destination.y + 75));
+  await session.send('Input.dispatchTouchEvent', {
+    type: 'touchMove',
+    touchPoints: [{ x: endX, y: endY }],
+  });
+  await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => JSON.parse(localStorage.getItem('lunara-labs:1:evidence')).state.placements.D,
+      ),
+    )
+    .toBe('recorded');
+  await expect(target.locator('[data-evidence-card="D"]')).toBeVisible();
+  await page.locator('#undo-evidence').scrollIntoViewIfNeeded();
+  const undo = await page.locator('#undo-evidence').boundingBox();
+  await page.touchscreen.tap(undo.x + undo.width / 2, undo.y + undo.height / 2);
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => JSON.parse(localStorage.getItem('lunara-labs:1:evidence')).state.placements.D,
+      ),
+    )
+    .toBe('unplaced');
+  await session.detach();
 });
