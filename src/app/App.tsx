@@ -58,12 +58,12 @@ export function App() {
           Where your work is saved
         </button>
       </footer>
-      <dialog id="privacy" ref={privacy}>
+      <dialog id="privacy" ref={privacy} aria-labelledby="privacy-heading">
         <button onClick={close} type="button" className="close-dialog" aria-label="Close">
           ×
         </button>
         <p className="eyebrow">Your field notes</p>
-        <h2>Your work stays in this browser.</h2>
+        <h2 id="privacy-heading">Your work stays in this browser.</h2>
         <p>
           As you work through a lab, this browser remembers your place and the answers you enter.
           You can return to them here later, but they will not automatically appear on another

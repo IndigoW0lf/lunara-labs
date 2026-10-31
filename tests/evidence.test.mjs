@@ -74,3 +74,38 @@ test('authored feedback separates a repeated report, an irrelevant method, and o
   assert.deepEqual(exported.responses.sourcePaths.B, ['B', 'A']);
   assert.ok(!Object.hasOwn(exported, 'learnerId'));
 });
+
+test('a revised board invalidates completion and must be reviewed before completing again', async () => {
+  const { finishBoard, canFinishBoard } = await import('../src/labs/evidence/model.mjs');
+  let state = initialBoard();
+  for (const id of ['A', 'B', 'C']) state = moveRecord(state, id, 'recorded');
+  state = moveRecord(state, 'D', 'aside');
+  assert.equal(finishBoard(state), state);
+  const complete = finishBoard({ ...state, checked: true, discussed: true });
+  assert.equal(complete.complete, true);
+  assert.equal(canFinishBoard(complete), true);
+  const revised = moveRecord(complete, 'D', 'recorded');
+  assert.equal(revised.complete, false);
+  assert.equal(revised.checked, false);
+  assert.equal(evidenceResult(revised).completion, 'in-progress');
+  const undone = undoMove(revised);
+  assert.equal(undone.complete, false);
+  assert.equal(canFinishBoard(undone), false);
+});
+
+test('restoration cannot skip evidence prerequisites by trusting completion flags', () => {
+  const restored = restoreBoard({
+    version: EVIDENCE_VERSION,
+    state: {
+      ...initialBoard(),
+      step: 3,
+      checked: true,
+      complete: true,
+      explanation: 'Synthetic retained explanation',
+    },
+  });
+  assert.equal(restored.step, 1);
+  assert.equal(restored.checked, false);
+  assert.equal(restored.complete, false);
+  assert.equal(restored.explanation, 'Synthetic retained explanation');
+});

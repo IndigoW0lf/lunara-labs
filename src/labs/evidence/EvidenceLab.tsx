@@ -11,6 +11,8 @@ import {
   undoMove,
   reviewBoard,
   evidenceResult,
+  canFinishBoard,
+  finishBoard,
   EVIDENCE_KEY,
   EVIDENCE_VERSION,
   type BoardState,
@@ -82,7 +84,7 @@ export function EvidenceLab() {
     },
     [update],
   );
-  const movement = useCardMovement(move);
+  const movement = useCardMovement(move, state.step === 1);
   const go = (step: number) => {
     setTrace(null);
     update({ ...current.current, step });
@@ -441,10 +443,8 @@ export function EvidenceLab() {
             <div className="button-row">
               <Button
                 id="evidence-finish"
-                disabled={
-                  !state.discussed && (!state.explanation.trim() || !state.nextCheck.trim())
-                }
-                onClick={() => update({ ...current.current, step: 3, complete: true })}
+                disabled={!canFinishBoard(state)}
+                onClick={() => update(finishBoard(current.current))}
               >
                 Keep my field notes →
               </Button>
