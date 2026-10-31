@@ -23,4 +23,6 @@ Keep transcripts available and stop narration on navigation, step changes, and t
 - The optional narration script uses fixed teaching dialogue only; it must not read learner responses.
 - Keep future Quest identity and persistence separate from lesson content and scoring. Use a local mock when developing an adapter.
 
+Keep source formatted with `npm run format`; run `npm run format:check` before handing off. TypeScript checks unused locals/parameters. Direct typed-state regression tests run with the development-only tsx loader. Browser storage is untrusted input: validate fields before rendering, preserve valid legacy content/version identity, and test malformed/partial attempts. Model completion prerequisites and cancellation cleanup explicitly instead of relying only on disabled controls.
+
 Run checks appropriate to a change. Add meaningful tests for changed scoring, persistence, authorization boundaries, or audio processing. Check changed interactions in a browser. Keep unfinished reviews and integrations clearly marked as pending.

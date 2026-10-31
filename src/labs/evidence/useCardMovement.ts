@@ -1,25 +1,64 @@
-import { useEffect, useRef, useState, type PointerEvent } from 'react';
-export function useCardMovement(move: (id: string, target: string) => void) {
-  const [dragging, setDragging] = useState<string | null>(null),
-    [over, setOver] = useState<string | null>(null);
-  const gesture = useRef<{
-      id: string;
-      pointer: number;
-      x: number;
-      y: number;
-      moved: boolean;
-    } | null>(null),
-    suppressClick = useRef(false),
-    frame = useRef(0),
-    point = useRef({ x: 0, y: 0 });
-  useEffect(() => () => cancelAnimationFrame(frame.current), []);
-  const clear = () => {
+import { useCallback, useEffect, useRef, useState, type PointerEvent } from 'react';
+
+type Gesture = {
+  id: string;
+  pointer: number;
+  x: number;
+  y: number;
+  moved: boolean;
+  handle: HTMLButtonElement;
+};
+
+export function useCardMovement(move: (id: string, target: string) => void, active: boolean) {
+  const [dragging, setDragging] = useState<string | null>(null);
+  const [over, setOver] = useState<string | null>(null);
+  const gesture = useRef<Gesture | null>(null);
+  const suppressClick = useRef(false);
+  const frame = useRef(0);
+  const point = useRef({ x: 0, y: 0 });
+
+  const release = useCallback(() => {
     cancelAnimationFrame(frame.current);
     frame.current = 0;
+    const previous = gesture.current;
     gesture.current = null;
+    if (previous?.handle.hasPointerCapture(previous.pointer)) {
+      previous.handle.releasePointerCapture(previous.pointer);
+    }
+  }, []);
+
+  const cancel = useCallback(() => {
+    release();
     setDragging(null);
     setOver(null);
-  };
+    suppressClick.current = false;
+  }, [release]);
+
+  useEffect(() => {
+    if (!active) {
+      cancel();
+      return;
+    }
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && gesture.current) {
+        event.preventDefault();
+        cancel();
+      }
+    };
+    const hidden = () => {
+      if (document.hidden) cancel();
+    };
+    window.addEventListener('keydown', escape);
+    window.addEventListener('blur', cancel);
+    document.addEventListener('visibilitychange', hidden);
+    return () => {
+      window.removeEventListener('keydown', escape);
+      window.removeEventListener('blur', cancel);
+      document.removeEventListener('visibilitychange', hidden);
+      release();
+    };
+  }, [active, cancel, release]);
+
   const targetAt = (x: number, y: number) =>
     document.elementFromPoint(x, y)?.closest<HTMLElement>('[data-evidence-target]')?.dataset
       .evidenceTarget || null;
@@ -36,46 +75,57 @@ export function useCardMovement(move: (id: string, target: string) => void) {
   };
   const handle = (id: string) => ({
     draggable: false,
-    onPointerDown: (e: PointerEvent<HTMLButtonElement>) => {
-      if (!e.isPrimary || e.button !== 0) return;
-      e.preventDefault();
-      gesture.current = { id, pointer: e.pointerId, x: e.clientX, y: e.clientY, moved: false };
+    onPointerDown: (event: PointerEvent<HTMLButtonElement>) => {
+      if (!active || !event.isPrimary || event.button !== 0) return;
+      event.preventDefault();
+      cancel();
       try {
-        e.currentTarget.setPointerCapture(e.pointerId);
+        event.currentTarget.setPointerCapture(event.pointerId);
+        gesture.current = {
+          id,
+          pointer: event.pointerId,
+          x: event.clientX,
+          y: event.clientY,
+          moved: false,
+          handle: event.currentTarget,
+        };
       } catch {
-        /* Synthetic tests and cancelled pointers may not have capture. */
+        // Without capture, a release outside the handle would be unreliable. Menus remain available.
       }
     },
-    onPointerMove: (e: PointerEvent<HTMLButtonElement>) => {
-      const g = gesture.current;
-      if (!g || g.pointer !== e.pointerId) return;
-      if (Math.hypot(e.clientX - g.x, e.clientY - g.y) > 8) g.moved = true;
-      if (g.moved) {
-        point.current = { x: e.clientX, y: e.clientY };
+    onPointerMove: (event: PointerEvent<HTMLButtonElement>) => {
+      const current = gesture.current;
+      if (!current || current.pointer !== event.pointerId) return;
+      if (Math.hypot(event.clientX - current.x, event.clientY - current.y) > 8)
+        current.moved = true;
+      if (current.moved) {
+        point.current = { x: event.clientX, y: event.clientY };
         setDragging(id);
-        setOver(targetAt(e.clientX, e.clientY));
+        setOver(targetAt(event.clientX, event.clientY));
         if (!frame.current) frame.current = requestAnimationFrame(scrollWhileDragging);
       }
     },
-    onPointerUp: (e: PointerEvent<HTMLButtonElement>) => {
-      const g = gesture.current;
-      if (!g || g.pointer !== e.pointerId) return;
-      const target = g.moved ? targetAt(e.clientX, e.clientY) : null;
-      suppressClick.current = g.moved;
-      if (e.currentTarget.hasPointerCapture(e.pointerId))
-        e.currentTarget.releasePointerCapture(e.pointerId);
-      clear();
-      if (target) move(g.id, target);
+    onPointerUp: (event: PointerEvent<HTMLButtonElement>) => {
+      const current = gesture.current;
+      if (!current || current.pointer !== event.pointerId) return;
+      const target = current.moved ? targetAt(event.clientX, event.clientY) : null;
+      const moved = current.moved;
+      cancel();
+      suppressClick.current = moved;
+      if (target) move(current.id, target);
     },
-    onPointerCancel: clear,
+    onLostPointerCapture: () => {
+      if (gesture.current) cancel();
+    },
+    onPointerCancel: cancel,
     onClick: () => {
       if (suppressClick.current) {
         suppressClick.current = false;
         return;
       }
-      document.querySelector<HTMLSelectElement>(`[data-card-select="${id}"]`)?.focus();
+      document.getElementById('place-' + id)?.focus();
     },
   });
   const zone = (target: string) => ({ 'data-evidence-target': target });
-  return { dragging, over, handle, zone };
+  return { dragging: active ? dragging : null, over: active ? over : null, handle, zone };
 }
