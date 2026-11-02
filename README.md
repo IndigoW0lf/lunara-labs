@@ -18,6 +18,8 @@ See the [migration record and remaining review checklist](docs/REACT-MIGRATION.m
 
 The [engineering review](docs/ENGINEERING-REVIEW.md) records concrete failures found after the first workbench implementation, their fixes, and the tradeoffs behind them. The review adds runtime validation of saved attempts, completion invariants, interrupted-drag cleanup, and regression coverage; manual learner and assistive-technology reviews remain separate.
 
+The [review-build walkthrough](docs/REVIEW-BUILD.md) records the next usability pass: restored phone-icon sizing and desktop gutters, claims shown before placement, focused source/feedback views, and editable field notes. Hosted review access remains owner-private; public GitHub access does not grant access to that hosted review site.
+
 ## Try it
 
 Requirements: **Node.js 22.12 or later** and a modern browser.
@@ -47,11 +49,11 @@ An unfinished search still receives a count out of all **85 targets**. Accuracy 
 
 ## Progress gallery
 
-Screenshots of the working two-lab prototype, supplied during development. They show the current visual experience; migration status is tracked above. The result values show one attempt and do not establish a general effect.
+The home and Evidence Workbench captures below come from the current React review build on November 2, 2026. The Rumor and Attention images are retained from the earlier illustrated prototype. All shown responses are sample development work; result values describe one attempt and do not establish a general effect.
 
 **Explore the labs** — illustrated introductions and a choice of investigations.
 
-![Lunara Labs home page with illustrated phone and investigation cards](docs/screenshots/home.png)
+![Lunara Labs home page with illustrated phone and investigation cards](docs/screenshots/home-current.jpg)
 
 **Trace a changing message** — choose a character, listen or read, and compare their message with its source.
 
@@ -60,6 +62,14 @@ Screenshots of the working two-lab prototype, supplied during development. They 
 **Compare the two rounds** — whole-passage totals and checked-part accuracy stay distinct when the stopping point is unclear.
 
 ![Attention comparison showing quiet and interrupted totals with separate checked-part accuracy](docs/screenshots/attention-results.png)
+
+**Read the claims before arranging the records** — the workbench keeps both statements together above the source cards.
+
+![Evidence Workbench with the two claims above courtyard measurement records and placement menus](docs/screenshots/evidence-workbench.jpg)
+
+**Keep and revise an explanation** — field notes gather the source ledger, reasoning, and a next check, with a route back to editing.
+
+![Evidence field notes with a sample source ledger, explanation, next check, and edit controls](docs/screenshots/evidence-field-notes.jpg)
 
 ## Privacy and data flow
 
@@ -85,7 +95,7 @@ npm run test:browser
 
 `npm test` runs 32 domain, typed state, audio, and preview-server tests using the development-only tsx loader. `npm run format:check` enforces the pinned source formatter in CI. `npm run check` also checks JavaScript syntax and scans for configured credential/private-reference patterns and browser data-request APIs. CI builds and checks the app, then runs browser flows against both the development server and the production preview on pushes and pull requests.
 
-React and React DOM are the runtime dependencies, bundled locally by Vite. TypeScript, Vite, and Playwright are development dependencies, pinned by the lockfile. Thirty-four browser cases cover desktop and narrow widths, including old-attempt version identity, safe rendering of typed markup, restart, and storage failure. Audio regeneration is optional; it requires a privately supplied OpenAI key, and new pitch processing requires FFmpeg with the Rubber Band filter. See [the development notes](docs/DEVELOPMENT.md).
+React and React DOM are the runtime dependencies, bundled locally by Vite. TypeScript, Vite, and Playwright are development dependencies, pinned by the lockfile. Thirty-six browser cases cover desktop and narrow widths, including old-attempt version identity, safe rendering of typed markup, restart, and storage failure. Audio regeneration is optional; it requires a privately supplied OpenAI key, and new pitch processing requires FFmpeg with the Rubber Band filter. See [the development notes](docs/DEVELOPMENT.md).
 
 ## Project structure
 

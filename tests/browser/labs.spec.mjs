@@ -345,3 +345,24 @@ test('Attention: partial saved round has safe controls and retains its elapsed t
   expect(attempt.reflection).toBe('Synthetic retained note');
   expect(errors).toEqual([]);
 });
+
+test('shared layout: hero phone content fits and lab pages keep their side gutters', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const phone = await page.locator('.hero-phone-invite').boundingBox();
+  const icon = await page.locator('.mini-phone-face svg').boundingBox();
+  const caption = await page.locator('.mini-phone-face > strong').boundingBox();
+  expect(icon.width).toBeLessThanOrEqual(26);
+  expect(icon.height).toBeLessThanOrEqual(26);
+  expect(caption.y + caption.height).toBeLessThan(phone.y + phone.height);
+  const viewport = page.viewportSize();
+  if (viewport.width > 800) await page.setViewportSize({ width: 1380, height: viewport.height });
+  await page.goto('/#/evidence');
+  const layout = await page.locator('.immersive-layout').boundingBox();
+  expect(layout.x).toBeGreaterThanOrEqual(15);
+  expect(layout.x + layout.width).toBeLessThanOrEqual(page.viewportSize().width - 15);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
+    true,
+  );
+});

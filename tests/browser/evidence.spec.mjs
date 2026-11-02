@@ -5,6 +5,12 @@ const raw = (page) =>
 async function open(page) {
   await page.goto('/#/evidence');
   await page.locator('#open-workbench').click();
+  await expect(page.getByRole('region', { name: 'The two claims', exact: true })).toContainText(
+    'every courtyard at every time',
+  );
+  expect((await page.locator('.evidence-claims-overview').boundingBox()).y).toBeLessThan(
+    (await page.locator('.evidence-inbox').boundingBox()).y,
+  );
 }
 async function place(page, id, target) {
   await page.getByLabel('Place record ' + id, { exact: true }).selectOption(target);
@@ -37,9 +43,13 @@ test('evidence: keyboard/menu arrangement, sources, feedback, reload, ledger and
   await page.getByRole('button', { name: 'Follow source B', exact: true }).click();
   await expect(page.locator('.evidence-trail')).toContainText('identifies A');
   await expect(page.locator('#source-trail-heading')).toBeFocused();
+  await expect(
+    page.getByRole('button', { name: 'Return to record B', exact: true }),
+  ).toBeInViewport();
   await page.reload();
   expect((await raw(page)).state.history.length).toBe(4);
   await page.locator('#review-evidence').click();
+  await expect(page.locator('#feedback-heading')).toBeFocused();
   await expect(page.locator('.evidence-feedback')).toContainText('B repeats A');
   await page.locator('#explain-evidence').click();
   await page
@@ -47,6 +57,15 @@ test('evidence: keyboard/menu arrangement, sources, feedback, reload, ledger and
     .fill('Synthetic: A and C each show an 8°F difference. B repeats A.');
   await page.locator('#evidence-next-check').fill('Synthetic: compare other times and courtyards.');
   await page.locator('#evidence-finish').click();
+  await page.emulateMedia({ media: 'print' });
+  await expect(page.locator('#edit-evidence')).not.toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'My evidence ledger', exact: true }),
+  ).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
+    true,
+  );
+  await page.emulateMedia({ media: 'screen' });
   const pending = page.waitForEvent('download');
   await page.locator('#download-evidence').click();
   const download = await pending;
@@ -174,14 +193,8 @@ test('evidence: damaged completion returns to the board and revisions revoke com
   await page.locator('#evidence-discussed').check();
   await page.locator('#evidence-finish').click();
   expect((await raw(page)).state.complete).toBe(true);
-  // Model reopening a completed attempt at its board stage.
-  await page.evaluate(() => {
-    const key = 'lunara-labs:1:evidence',
-      saved = JSON.parse(localStorage.getItem(key));
-    saved.state.step = 1;
-    localStorage.setItem(key, JSON.stringify(saved));
-  });
-  await page.reload();
+  await page.locator('#edit-evidence').click();
+  await page.locator('#return-to-board').click();
   await place(page, 'D', 'everywhere');
   expect((await raw(page)).state.complete).toBe(false);
   await page.getByRole('link', { name: 'All labs', exact: false }).click();
