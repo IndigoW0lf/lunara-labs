@@ -57,7 +57,8 @@ export function EvidenceLab() {
   const [state, setState] = useState(read),
     current = useRef(state),
     main = useRef<HTMLElement>(null),
-    pendingFocus = useRef<string | null>(null);
+    pendingFocus = useRef<string | null>(null),
+    pendingFeedbackFocus = useRef(false);
   const [storageAvailable, setStorageAvailable] = useState(true),
     [announcement, setAnnouncement] = useState(''),
     [trace, setTrace] = useState<string | null>(null),
@@ -107,17 +108,27 @@ export function EvidenceLab() {
       control?.scrollIntoView({ block: 'nearest', behavior: 'instant' });
       pendingFocus.current = null;
     }
+    if (pendingFeedbackFocus.current) {
+      const heading = main.current?.querySelector<HTMLElement>('#feedback-heading');
+      heading?.focus({ preventScroll: true });
+      heading?.scrollIntoView({ block: 'start', behavior: 'instant' });
+      pendingFeedbackFocus.current = false;
+    }
   }, [state]);
   useLayoutEffect(() => {
     if (trace) {
       const h = main.current?.querySelector<HTMLElement>('#source-trail-heading');
       h?.focus({ preventScroll: true });
-      h?.scrollIntoView({ block: 'nearest' });
+      h?.scrollIntoView({ block: 'start', behavior: 'instant' });
     }
   }, [trace]);
   const allPlaced = records.every((r) => state.placements[r.id as CardId] !== 'unplaced');
   const note = (field: 'initialThought' | 'explanation' | 'nextCheck', value: string) =>
-    update({ ...current.current, [field]: value });
+    update({
+      ...current.current,
+      [field]: value,
+      ...(field !== 'initialThought' ? { complete: false } : {}),
+    });
   const download = () => {
     const url = URL.createObjectURL(
         new Blob([JSON.stringify(evidenceResult(current.current), null, 2)], {
@@ -304,6 +315,19 @@ export function EvidenceLab() {
             <p className="evidence-announcement" role="status" aria-live="polite">
               {announcement}
             </p>
+            <section className="sheet evidence-claims-overview" aria-labelledby="claims-heading">
+              <h2 id="claims-heading">The two claims</h2>
+              <div className="evidence-claims-grid">
+                {targets
+                  .filter((target) => target.id === 'recorded' || target.id === 'everywhere')
+                  .map((target) => (
+                    <div key={target.id}>
+                      <h3>{target.title}</h3>
+                      <p>{target.description}</p>
+                    </div>
+                  ))}
+              </div>
+            </section>
             {zone('unplaced')}
             <div className="evidence-board">
               {(['recorded', 'everywhere', 'aside'] as TargetId[]).map(zone)}
@@ -354,7 +378,10 @@ export function EvidenceLab() {
               <Button
                 id="review-evidence"
                 disabled={!allPlaced}
-                onClick={() => update({ ...current.current, checked: true })}
+                onClick={() => {
+                  pendingFeedbackFocus.current = true;
+                  update({ ...current.current, checked: true });
+                }}
               >
                 Compare my reasoning
               </Button>
@@ -366,7 +393,9 @@ export function EvidenceLab() {
             )}
             {state.checked && (
               <section className="sheet sage evidence-feedback" aria-labelledby="feedback-heading">
-                <h2 id="feedback-heading">Look back at the records.</h2>
+                <h2 id="feedback-heading" tabIndex={-1}>
+                  Look back at the records.
+                </h2>
                 {reviewBoard(state).map((item) => (
                   <div className="feedback" key={item.id}>
                     <strong>Record {item.id}</strong>
@@ -434,7 +463,9 @@ export function EvidenceLab() {
                 id="evidence-discussed"
                 type="checkbox"
                 checked={state.discussed}
-                onChange={(e) => update({ ...current.current, discussed: e.target.checked })}
+                onChange={(e) =>
+                  update({ ...current.current, discussed: e.target.checked, complete: false })
+                }
               />
               <span>
                 I explained my conclusion and next check aloud instead of typing both answers.
@@ -498,6 +529,9 @@ export function EvidenceLab() {
               It has not been sent to Quest.
             </p>
             <div className="button-row">
+              <Button id="edit-evidence" secondary onClick={() => go(2)}>
+                Edit my explanation
+              </Button>
               <Button id="print-evidence" onClick={() => window.print()}>
                 Print my notes
               </Button>
