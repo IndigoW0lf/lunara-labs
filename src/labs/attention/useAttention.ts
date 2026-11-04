@@ -1,23 +1,12 @@
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
-import { LAB_VERSION, duePings } from '../../domain/data.mjs';
+import { duePings } from '../../domain/data.mjs';
+import { useAttemptStorage } from '../../persistence/useAttemptStorage';
 import { chime, stopNarration } from '../../audio/narration.mjs';
-import {
-  attentionReducer,
-  initialAttention,
-  restoreAttention,
-  ATTENTION_KEY,
-  type Action,
-} from './state';
-function read() {
-  try {
-    return restoreAttention(JSON.parse(localStorage.getItem(ATTENTION_KEY) || 'null'));
-  } catch {
-    return initialAttention();
-  }
-}
+import { attentionReducer, attentionAttempt, type Action } from './state';
 export function useAttention() {
-  const [state, setState] = useState(read),
-    [storageAvailable, setStorageAvailable] = useState(true);
+  const persistence = useAttemptStorage(attentionAttempt);
+  const [state, setState] = useState(persistence.initialState);
+  const save = persistence.save;
   const current = useRef(state),
     epoch = useRef({ start: 0, base: 0 }),
     savedSecond = useRef(-1);
@@ -27,33 +16,32 @@ export function useAttention() {
       ? epoch.current.base + (performance.now() - epoch.current.start) / 1000
       : a?.elapsed || 0;
   }, []);
-  const send = useCallback((action: Action) => {
-    if (action.type === 'start' || action.type === 'resume') {
-      stopNarration();
-      epoch.current = {
-        start: performance.now(),
-        base: action.type === 'start' ? 0 : current.current.active?.elapsed || 0,
-      };
-      savedSecond.current = -1;
-    }
-    const next = attentionReducer(current.current, action);
-    if (next === current.current) return;
-    current.current = next;
-    setState(next);
-    const second = Math.floor(next.active?.elapsed || 0);
-    if (
-      action.type !== 'tick' ||
-      second !== savedSecond.current ||
-      next.active?.status !== 'running'
-    ) {
-      savedSecond.current = second;
-      try {
-        localStorage.setItem(ATTENTION_KEY, JSON.stringify({ version: LAB_VERSION, state: next }));
-      } catch {
-        setStorageAvailable(false);
+  const send = useCallback(
+    (action: Action) => {
+      if (action.type === 'start' || action.type === 'resume') {
+        stopNarration();
+        epoch.current = {
+          start: performance.now(),
+          base: action.type === 'start' ? 0 : current.current.active?.elapsed || 0,
+        };
+        savedSecond.current = -1;
       }
-    }
-  }, []);
+      const next = attentionReducer(current.current, action);
+      if (next === current.current) return;
+      current.current = next;
+      setState(next);
+      const second = Math.floor(next.active?.elapsed || 0);
+      if (
+        action.type !== 'tick' ||
+        second !== savedSecond.current ||
+        next.active?.status !== 'running'
+      ) {
+        savedSecond.current = second;
+        save(next);
+      }
+    },
+    [save],
+  );
   useLayoutEffect(() => {
     const pause = (reason: string) => {
       if (current.current.active?.status === 'running')
@@ -92,5 +80,5 @@ export function useAttention() {
       stopNarration();
     };
   }, [elapsed, send]);
-  return { state, send, elapsed, storageAvailable };
+  return { state, send, elapsed, persistence, storageAvailable: persistence.status === 'saved' };
 }

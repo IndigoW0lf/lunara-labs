@@ -4,6 +4,7 @@ import { PHONE_ALERTS } from '../../presentation/phone.mjs';
 import { ATTENTION_INTRO } from '../../audio/audio-cast.mjs';
 import { stopNarration, prepareChime, chime } from '../../audio/narration.mjs';
 import { LabLayout } from '../../components/LabLayout';
+import { SavingNotice } from '../../components/SavingNotice';
 import { Phone, PhoneHeader, Portrait, Icon } from '../../components/Phone';
 import { Narration } from '../../components/Narration';
 import { Passage } from './Passage';
@@ -1167,7 +1168,7 @@ function FieldNotes({
   );
 }
 export function AttentionLab() {
-  const { state, send, elapsed, storageAvailable } = useAttention(),
+  const { state, send, elapsed, storageAvailable, persistence } = useAttention(),
     main = useRef<HTMLElement>(null);
   const go = (step: number) => {
     stopNarration();
@@ -1191,11 +1192,7 @@ export function AttentionLab() {
         storageAvailable={storageAvailable}
         guidance={copy.guidance}
       >
-        {!storageAvailable && (
-          <p role="status">
-            Browser saving is unavailable. Download your field notes before leaving.
-          </p>
-        )}
+        <SavingNotice persistence={persistence} state={state} />
         {state.step === 0 ? (
           <Intro state={state} send={send} go={go} />
         ) : state.step === 1 ? (

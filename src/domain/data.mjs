@@ -1,8 +1,9 @@
 export const LAB_VERSION = '0.3.0';
+export const SUPPORTED_LAB_VERSIONS = ['0.1.0', '0.2.0', LAB_VERSION];
 export function restoreProgress(raw, fallback) {
   if (
     !raw ||
-    !['0.1.0', '0.2.0', LAB_VERSION].includes(raw.version) ||
+    !SUPPORTED_LAB_VERSIONS.includes(raw.version) ||
     !raw.state ||
     typeof raw.state !== 'object' ||
     Array.isArray(raw.state)

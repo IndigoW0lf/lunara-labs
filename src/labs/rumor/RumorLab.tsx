@@ -1,15 +1,15 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
-import { labs, messages, rumorQuestions, makeResult, LAB_VERSION } from '../../domain/data.mjs';
+import { labs, messages, rumorQuestions, makeResult } from '../../domain/data.mjs';
 import { stopNarration } from '../../audio/narration.mjs';
 import { LabLayout } from '../../components/LabLayout';
+import { SavingNotice } from '../../components/SavingNotice';
+import { useAttemptStorage } from '../../persistence/useAttemptStorage';
 import { Icon, Phone, PhoneHeader, Portrait, VoiceWaves } from '../../components/Phone';
 import { Narration } from '../../components/Narration';
 import { copy } from './copy';
 import {
-  initialRumor,
-  restoreRumor,
+  rumorAttempt,
   rumorReducer,
-  RUMOR_KEY,
   type RumorState,
   type RumorAction,
   type MessageId,
@@ -17,13 +17,6 @@ import {
 
 const lab = labs.rumor;
 type Dispatch = (action: RumorAction) => void;
-function readAttempt() {
-  try {
-    return restoreRumor(JSON.parse(localStorage.getItem(RUMOR_KEY) || 'null'));
-  } catch {
-    return initialRumor();
-  }
-}
 function Notice() {
   return (
     <div className="source-notice">
@@ -514,22 +507,19 @@ function FieldNotes({
   );
 }
 export function RumorLab() {
+  const persistence = useAttemptStorage(rumorAttempt);
   const [state, setState] = useState(() => {
-    const restored = readAttempt();
+    const restored = persistence.initialState;
     return restored.step === 1 ? rumorReducer(restored, { type: 'step', step: 1 }) : restored;
   });
   const current = useRef(state),
     main = useRef<HTMLElement>(null);
-  const [storageAvailable, setStorageAvailable] = useState(true);
+  const storageAvailable = persistence.status === 'saved';
   const dispatch: Dispatch = (action) => {
     const next = rumorReducer(current.current, action);
     current.current = next;
     setState(next);
-    try {
-      localStorage.setItem(RUMOR_KEY, JSON.stringify({ version: LAB_VERSION, state: next }));
-    } catch {
-      setStorageAvailable(false);
-    }
+    persistence.save(next);
   };
   const go = (step: number) => {
     stopNarration();
@@ -553,11 +543,7 @@ export function RumorLab() {
         storageAvailable={storageAvailable}
         guidance={copy.guidance}
       >
-        {!storageAvailable && (
-          <p role="status">
-            Browser saving is unavailable. Download your field notes before leaving.
-          </p>
-        )}
+        <SavingNotice persistence={persistence} state={state} />
         {state.step === 0 ? (
           <Intro go={go} />
         ) : state.step === 1 ? (

@@ -1,20 +1,20 @@
 import { useCallback, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { LabLayout } from '../../components/LabLayout';
+import { SavingNotice } from '../../components/SavingNotice';
+import { useAttemptStorage } from '../../persistence/useAttemptStorage';
 import {
   evidenceLab,
   records,
   targets,
   sourceTrail,
   initialBoard,
-  restoreBoard,
+  evidenceAttempt,
   moveRecord,
   undoMove,
   reviewBoard,
   evidenceResult,
   canFinishBoard,
   finishBoard,
-  EVIDENCE_KEY,
-  EVIDENCE_VERSION,
   type BoardState,
   type CardId,
   type TargetId,
@@ -46,35 +46,26 @@ function Button({
     </button>
   );
 }
-function read() {
-  try {
-    return restoreBoard(JSON.parse(localStorage.getItem(EVIDENCE_KEY) || 'null'));
-  } catch {
-    return initialBoard();
-  }
-}
 export function EvidenceLab() {
-  const [state, setState] = useState(read),
+  const persistence = useAttemptStorage(evidenceAttempt);
+  const [state, setState] = useState(persistence.initialState),
     current = useRef(state),
     main = useRef<HTMLElement>(null),
     pendingFocus = useRef<string | null>(null),
     pendingFeedbackFocus = useRef(false);
-  const [storageAvailable, setStorageAvailable] = useState(true),
-    [announcement, setAnnouncement] = useState(''),
+  const storageAvailable = persistence.status === 'saved';
+  const [announcement, setAnnouncement] = useState(''),
     [trace, setTrace] = useState<string | null>(null),
     [downloaded, setDownloaded] = useState(false);
-  const update = useCallback((next: BoardState) => {
-    current.current = next;
-    setState(next);
-    try {
-      localStorage.setItem(
-        EVIDENCE_KEY,
-        JSON.stringify({ version: EVIDENCE_VERSION, state: next }),
-      );
-    } catch {
-      setStorageAvailable(false);
-    }
-  }, []);
+  const save = persistence.save;
+  const update = useCallback(
+    (next: BoardState) => {
+      current.current = next;
+      setState(next);
+      save(next);
+    },
+    [save],
+  );
   const move = useCallback(
     (id: string, target: string) => {
       const next = moveRecord(current.current, id, target);
@@ -229,12 +220,7 @@ export function EvidenceLab() {
           </>
         }
       >
-        {!storageAvailable && (
-          <p role="status" className="warning">
-            Browser saving is unavailable. Your board still works in this session; download your
-            field notes before leaving.
-          </p>
-        )}
+        <SavingNotice persistence={persistence} state={state} />
         {state.step === 0 ? (
           <>
             <h1>What can these courtyard records help us say?</h1>

@@ -10,7 +10,11 @@ Browser progress persists between edits. Use synthetic attempts while developing
 
 All routes render with React. `src/app/` owns the catalog, About and shell; `src/labs/` owns typed activity state and screens. `src/domain/` contains the framework-independent lesson/result helpers, `src/audio/` the cast/manifest/playback modules, and `src/presentation/` the fixed phone data/icons. Static resources live in `public/`. The old controller, template renderers, and standalone entry have been removed; prior Git revisions preserve their history.
 
-Run `npm run build`, `npm run check`, and `npm run test:browser`. Install Chromium once with `npx playwright install chromium`. The build verifies local entry assets, approved audio, font notices, and the absence of raw source modules in production. CI runs sixteen browser cases against Vite and the production preview. To test output locally, build, stop Vite, then use `LABS_TEST_SERVER='npm run preview' npm run test:browser`. Test with invented attempts; never commit browser profiles or real learner exports.
+Run `npm run build`, `npm run check`, and `npm run test:browser`. Install Chromium once with `npx playwright install chromium`. The build verifies local entry assets, approved audio, font notices, and the absence of raw source modules in production. CI runs 52 browser cases against Vite and the production preview. To test output locally, build, stop Vite, then use `LABS_TEST_SERVER='npm run preview' npm run test:browser`. Test with invented attempts; never commit browser profiles or real learner exports.
+
+## Saved work and recovery
+
+`src/persistence/attemptStorage.ts` owns envelope compatibility and the pre-write comparison. The React adapter owns storage/focus/pageshow subscriptions and their cleanup; lab controllers still own state and timer rules. See [SAVED-PROGRESS.md](SAVED-PROGRESS.md) before adding a save path. All mutations, including restart and route-away pauses, must pass the same guard. The catalog reads through this boundary and never writes.
 
 ## Optional audio work
 

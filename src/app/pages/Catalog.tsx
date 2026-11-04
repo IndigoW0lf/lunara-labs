@@ -1,31 +1,45 @@
-import { useLayoutEffect, useRef, useState } from 'react';
-import { restoreRumor } from '../../labs/rumor/state';
-import { restoreAttention } from '../../labs/attention/state';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { rumorAttempt } from '../../labs/rumor/state';
+import { attentionAttempt } from '../../labs/attention/state';
 import { labCatalog as labs } from '../../domain/catalog.mjs';
-import { restoreBoard } from '../../labs/evidence/model.mjs';
+import { evidenceAttempt } from '../../labs/evidence/model.mjs';
+import { openAttempt } from '../../persistence/attemptStorage';
 import { Icon, Portrait } from '../../components/Phone';
-function readStatuses(): Record<string, { step: number; complete: boolean }> {
+const attempts = { rumor: rumorAttempt, attention: attentionAttempt, evidence: evidenceAttempt };
+function readStatuses(): Record<
+  string,
+  { step: number; complete: boolean; saveProtected: boolean }
+> {
   return Object.fromEntries(
-    Object.keys(labs).map((slug) => {
-      try {
-        const raw = JSON.parse(localStorage.getItem('lunara-labs:1:' + slug) || 'null');
-        return [
-          slug,
-          slug === 'evidence'
-            ? restoreBoard(raw)
-            : slug === 'rumor'
-              ? restoreRumor(raw)
-              : restoreAttention(raw),
-        ];
-      } catch {
-        return [slug, { step: 0, complete: false }];
-      }
+    Object.entries(attempts).map(([slug, definition]) => {
+      const attempt = openAttempt<{ step: number; complete: boolean }>(definition, {
+        getItem: (key) => localStorage.getItem(key),
+        setItem: () => {
+          throw new Error('Catalog never saves attempts');
+        },
+      });
+      return [
+        slug,
+        {
+          step: attempt.initialState.step,
+          complete: attempt.initialState.complete,
+          saveProtected: attempt.status === 'unsupported' || attempt.status === 'unreadable',
+        },
+      ];
     }),
   );
 }
 export function Catalog({ hash }: { hash: string }) {
-  const [statuses] = useState(readStatuses),
+  const [statuses, setStatuses] = useState(readStatuses),
     main = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const changed = (event: StorageEvent) => {
+      if (event.key === null || Object.values(attempts).some((lab) => lab.key === event.key))
+        setStatuses(readStatuses());
+    };
+    window.addEventListener('storage', changed);
+    return () => window.removeEventListener('storage', changed);
+  }, []);
   useLayoutEffect(() => {
     document.title = 'Interactive investigations · Lunara Labs';
     const target = main.current?.querySelector<HTMLElement>(hash === '#labs' ? '#labs h2' : 'h1');
@@ -103,11 +117,13 @@ export function Catalog({ hash }: { hash: string }) {
                     <span aria-hidden="true">↗</span>
                   </a>
                   <span className="save-status">
-                    {statuses[slug].complete
-                      ? 'Field notes saved'
-                      : statuses[slug].step > 0
-                        ? 'In progress'
-                        : 'Explore at your pace'}
+                    {statuses[slug].saveProtected
+                      ? 'Saved copy protected'
+                      : statuses[slug].complete
+                        ? 'Field notes saved'
+                        : statuses[slug].step > 0
+                          ? 'In progress'
+                          : 'Explore at your pace'}
                   </span>
                 </div>
               </div>

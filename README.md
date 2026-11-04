@@ -20,6 +20,20 @@ The [engineering review](docs/ENGINEERING-REVIEW.md) records concrete failures f
 
 The [review-build walkthrough](docs/REVIEW-BUILD.md) records the next usability pass: restored phone-icon sizing and desktop gutters, claims shown before placement, focused source/feedback views, and editable field notes. Hosted review access remains owner-private; public GitHub access does not grant access to that hosted review site.
 
+**Saved-progress reliability:** all three labs now share a guarded storage boundary. Unknown-version and unreadable saved copies are protected from replacement; observed changes from another tab stop stale saving while keeping this tab’s work downloadable. Legacy attempt identity and Attention’s clock remain separate from storage. See [the recovery contract and its concurrency limits](docs/SAVED-PROGRESS.md).
+
+## Next development milestones
+
+| Order | Work | What will demonstrate completion |
+| --- | --- | --- |
+| 1 | Multiple local attempts and backup import preview | Start a new attempt without replacing an earlier one; inspect a validated backup before choosing what to restore. Use transactional storage for simultaneous writers. |
+| 2 | Rook’s Delivery Routes: first complete map | Confirm the current source lesson, implement a deterministic command runner, and add keyboard/menu sequencing, step/pause/reset, collision feedback and reduced-motion playback. |
+| 3 | Accessibility and learner review | Exercise all three labs with real devices and assistive technology, then fix observed problems and record remaining limits. Automated narrow-screen checks already exist. |
+| 4 | Focused React maintenance | Extract a screen only when its behavior can be reviewed independently; evaluate hooks-aware lint against the installed TypeScript version and retain existing recovery/timer coverage. |
+| 5 | Moonlight Model and local observation media | Validate the spatial model, then add original captioned clips and timeline notes with deterministic pause/seek/replay behavior. |
+
+These are planned milestones, not completed features or a claim of program acceptance. The [roadmap](docs/ROADMAP.md) gives scope and acceptance checks; public hosting and a mocked Quest boundary remain separate tracks.
+
 ## Try it
 
 Requirements: **Node.js 22.12 or later** and a modern browser.
@@ -93,9 +107,9 @@ npx playwright install chromium
 npm run test:browser
 ```
 
-`npm test` runs 32 domain, typed state, audio, and preview-server tests using the development-only tsx loader. `npm run format:check` enforces the pinned source formatter in CI. `npm run check` also checks JavaScript syntax and scans for configured credential/private-reference patterns and browser data-request APIs. CI builds and checks the app, then runs browser flows against both the development server and the production preview on pushes and pull requests.
+`npm test` runs 42 domain, typed state, audio, and preview-server tests using the development-only tsx loader. `npm run format:check` enforces the pinned source formatter in CI. `npm run check` also checks JavaScript syntax and scans for configured credential/private-reference patterns and browser data-request APIs. CI builds and checks the app, then runs browser flows against both the development server and the production preview on pushes and pull requests.
 
-React and React DOM are the runtime dependencies, bundled locally by Vite. TypeScript, Vite, and Playwright are development dependencies, pinned by the lockfile. Thirty-six browser cases cover desktop and narrow widths, including old-attempt version identity, safe rendering of typed markup, restart, and storage failure. Audio regeneration is optional; it requires a privately supplied OpenAI key, and new pitch processing requires FFmpeg with the Rubber Band filter. See [the development notes](docs/DEVELOPMENT.md).
+React and React DOM are the runtime dependencies, bundled locally by Vite. TypeScript, Vite, and Playwright are development dependencies, pinned by the lockfile. Fifty-two browser cases cover desktop and narrow widths, including old-attempt version identity, safe rendering of typed markup, restart, and storage failure. Audio regeneration is optional; it requires a privately supplied OpenAI key, and new pitch processing requires FFmpeg with the Rubber Band filter. See [the development notes](docs/DEVELOPMENT.md).
 
 ## Project structure
 

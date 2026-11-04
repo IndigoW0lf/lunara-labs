@@ -35,7 +35,7 @@ export function LabLayout({
         <p className="sidebar-note">
           {storageAvailable
             ? 'Your place is saved in this browser, so you can come back to the activity later.'
-            : 'Browser saving is unavailable.'}
+            : 'Your work is staying in this tab. Read the saving notice before leaving.'}
         </p>
       </aside>
       <section className="lab-main">

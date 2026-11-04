@@ -1,4 +1,9 @@
-import { LAB_VERSION, restoreProgress, rumorQuestions } from '../../domain/data.mjs';
+import {
+  LAB_VERSION,
+  SUPPORTED_LAB_VERSIONS,
+  restoreProgress,
+  rumorQuestions,
+} from '../../domain/data.mjs';
 import { isRecord, oneOf, text, step, version, integer } from '../../persistence/validation';
 export const RUMOR_KEY = 'lunara-labs:1:rumor';
 export type MessageId = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
@@ -107,3 +112,10 @@ export function rumorReducer(state: RumorState, action: RumorAction): RumorState
       return initialRumor();
   }
 }
+
+export const rumorAttempt = {
+  key: RUMOR_KEY,
+  version: LAB_VERSION,
+  supportedVersions: SUPPORTED_LAB_VERSIONS,
+  restore: restoreRumor,
+};

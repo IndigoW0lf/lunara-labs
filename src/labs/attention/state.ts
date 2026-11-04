@@ -1,5 +1,6 @@
 import {
   LAB_VERSION,
+  SUPPORTED_LAB_VERSIONS,
   restoreProgress,
   passages,
   scoreRound,
@@ -339,3 +340,10 @@ export function attentionReducer(st: AttentionState, action: Action): AttentionS
       return initialAttention();
   }
 }
+
+export const attentionAttempt = {
+  key: ATTENTION_KEY,
+  version: LAB_VERSION,
+  supportedVersions: SUPPORTED_LAB_VERSIONS,
+  restore: restoreAttention,
+};

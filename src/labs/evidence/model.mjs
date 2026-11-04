@@ -243,3 +243,10 @@ export function evidenceResult(state) {
   };
 }
 validateSources();
+
+export const evidenceAttempt = {
+  key: EVIDENCE_KEY,
+  version: EVIDENCE_VERSION,
+  supportedVersions: [EVIDENCE_VERSION],
+  restore: restoreBoard,
+};

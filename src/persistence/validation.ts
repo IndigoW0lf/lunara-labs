@@ -1,4 +1,4 @@
-import { LAB_VERSION } from '../domain/data.mjs';
+import { SUPPORTED_LAB_VERSIONS } from '../domain/data.mjs';
 
 // JSON parsing establishes syntax, not the shape of a saved attempt.
 export function isRecord(value: unknown): value is Record<string, unknown> {
@@ -31,5 +31,5 @@ export function step(value: unknown): number {
 }
 
 export function version(value: unknown, fallback: string): string {
-  return oneOf(value, ['0.1.0', '0.2.0', LAB_VERSION]) ? value : fallback;
+  return oneOf(value, SUPPORTED_LAB_VERSIONS) ? value : fallback;
 }
